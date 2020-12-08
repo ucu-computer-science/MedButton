@@ -42,6 +42,7 @@
 #include "cyhal.h"
 #include "cybsp.h"
 #include "cy_retarget_io.h"
+#include <stdlib.h>
 
 /*******************************************************************************
 * Function Name: handle_error
@@ -58,13 +59,44 @@
 *******************************************************************************/
 void handle_error(void)
 {
-     /* Disable all interrupts. */
+    /* Disable all interrupts. */
     __disable_irq();
 
     CY_ASSERT(0);
 }
 
+/*******************************************************************************
+* Function Name: NMEAtoDecimalDegrees
+********************************************************************************
+* Summary:
+* Converts nmea raw latitude and longitute data to decimal degrees
+*
+* Parameters:
+*  char
+*
+* Return:
+*  float
+*
+*******************************************************************************/
 
+float NMEAtoDecimalDegrees(const char *degree, char quadrant)
+{
+    // nmea format: "ddmm.mmmm" or "dddmm.mmmm" to decimal degrees
+    // D+M/60
+    float result = 0;
+    if (strlen(degree) > 5)
+    {
+        char integerPart[3 + 1];
+        int counter = (degree[4] == '.' ? 2 : 3);
+        memcpy(integerPart, degree, counter);
+        integerPart[counter] = 0;
+        degree += counter;
+        result = atoi(integerPart) + atof(degree) / 60.;
+        if (quadrant == 'W' || quadrant == 'S')
+            result = -result;
+    }
+    return result;
+}
 
 /*******************************************************************************
 * Function Name: main
@@ -84,8 +116,8 @@ int main(void)
 {
     cy_rslt_t result;
     // uint8_t read_data; /* Variable to store the received character
-                        /* through terminal */
-    
+    /* through terminal */
+
     /* Initialize the device and board peripherals */
     result = cybsp_init();
     if (result != CY_RSLT_SUCCESS)
@@ -106,15 +138,13 @@ int main(void)
     cyhal_uart_t gps_uart;
 
     const cyhal_uart_cfg_t uart_config =
-    {
-        .data_bits = 8,
-        .stop_bits = 1,
-        .parity = CYHAL_UART_PARITY_NONE,
-        .rx_buffer = NULL,
-        .rx_buffer_size = 0,
-    };
-
-
+        {
+            .data_bits = 8,
+            .stop_bits = 1,
+            .parity = CYHAL_UART_PARITY_NONE,
+            .rx_buffer = NULL,
+            .rx_buffer_size = 0,
+        };
 
     result = cyhal_uart_init(&gps_uart, P6_1, P6_0, NULL, &uart_config);
 
@@ -133,15 +163,86 @@ int main(void)
     __enable_irq();
 
     uint8_t c = 0;
-
+    int k;
+    char nmea[120];
+    // char result[40];
+    // float latitude;
+    float longitude;
+    char lon[30];
+    char lat[30];
 
     cyhal_gpio_write(CYBSP_USER_LED, CYBSP_LED_STATE_OFF);
- 
+
     for (;;)
     {
-        if (cyhal_uart_getc(&gps_uart, &c, 0) == CY_RSLT_SUCCESS ) {
-            if (c) {
-                printf("%c", (char) c);
+        if (cyhal_uart_getc(&gps_uart, &c, 0) == CY_RSLT_SUCCESS)
+        {
+            //c = cyhal_uart_getc(&gps_uart, &c, 0);
+            if (c)
+            {
+                if (c == '$')
+                {
+                    for (k = 0; k < 5; k++)
+                    {
+                        do
+                        {
+                            cyhal_uart_getc(&gps_uart, &c, 0);
+                        } while (!(c));
+                        nmea[k] = c; // G + P + R + M + C
+                    }
+
+                    if (strstr(nmea, "GPRMC"))
+                    {
+                        do
+                        {
+                            do
+                            {
+                                cyhal_uart_getc(&gps_uart, &c, 0);
+                            } while (!(c));
+                        } while (!(c == 'A' || c == 'V') && k < 120);
+                        k = 0;
+                        cyhal_uart_getc(&gps_uart, &c, 0);
+                        do
+                        {
+                            do
+                            {
+                                cyhal_uart_getc(&gps_uart, &c, 0);
+                            } while (!(c));
+                            printf("Lat: %c", (char) c);
+                            lat[k] = c;
+                            k++;
+                        } while (!(c == 'N' || c == 'S') && k < 120);
+                        printf("\r\n");
+                        k = 0;
+                        cyhal_uart_getc(&gps_uart, &c, 0);
+                        do
+                        {
+                            do
+                            {
+                                cyhal_uart_getc(&gps_uart, &c, 0);
+                            } while (!(c));
+                            printf("Lon: %c", (char) c);
+                            lon[k] = c;
+                            k++;
+                        } while (!(c == 'E' || c == 'W') && k < 120);
+                        printf("\r\n");
+                        char lat1[30];
+                        for (int i = 0; i < k - 3; ++i)
+                        {
+                            lat1[i] = lat[i];
+                        }
+                        NMEAtoDecimalDegrees(lat1, lat[-1]);
+
+                        char lon1[30];
+                        for (int i = 0; i < k - 3; ++i)
+                        {
+                            lon1[i] = lon[i];
+                        }
+                        longitude = NMEAtoDecimalDegrees(lon1, lon[-1]);
+                        printf("%f", longitude);
+                    }
+                }
+                // printf("%c", (char)c);
             }
         }
     }
