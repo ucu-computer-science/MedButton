@@ -55,7 +55,7 @@ void task_gprs(void* param);
 float latitude, longitude;
 char resultTime[11];
 char resultMessage[100]; 
-uint8_t * trial;
+uint8_t * castedMessage;
 
 
 const cyhal_uart_cfg_t uart_config =
@@ -254,26 +254,26 @@ void task_gps(void* param) {
                         cyhal_uart_getc(&gps_uart, &c, 0);
                         while (!(c == ','))
                         {
-                            lon[index] = c;
+                            lat[index] = c;
                             ++index;
                             cyhal_uart_getc(&gps_uart, &c, 0);
                         }
                         cyhal_uart_getc(&gps_uart, &c, 0);
-                        longitude = NMEAtoDecimalDegrees(lon, c);
-                        printf("\r\nLongitude: %f", longitude);
+                        latitude = NMEAtoDecimalDegrees(lon, c);
+                        printf("\r\nLatitude: %f", latitude);
 
                         index = 0;
                         cyhal_uart_getc(&gps_uart, &c, 0);
                         cyhal_uart_getc(&gps_uart, &c, 0);
                         while (!(c == ','))
                         {
-                            lat[index] = c;
+                            lon[index] = c;
                             ++index;
                             cyhal_uart_getc(&gps_uart, &c, 0);
                         }
                         cyhal_uart_getc(&gps_uart, &c, 0);
-                        latitude = NMEAtoDecimalDegrees(lat, c);
-                        printf("\r\nLatitude: %f\r\n\r\n", latitude);
+                        longitude = NMEAtoDecimalDegrees(lat, c);
+                        printf("\r\nLongitude: %f\r\n\r\n", longitude);
                     }
                 }
             }
@@ -297,12 +297,10 @@ void task_gprs(void* param) {
         
         //printf("\r\n    Pressed Longitude and Latitude: %f, %f", longitude, latitude);
         //printf("\r\n");
-        sprintf(resultMessage, "Time: %s\r\nlongitude and latitude: %f, %f", resultTime, longitude, latitude);
+        sprintf(resultMessage, "Time: %s\r\nLatitude and Longitude: %f, %f", resultTime, latitude, longitude);
         printf("%s\r\n", resultMessage);
 
-        trial = (uint8_t *) resultMessage;
-
-       
+        castedMessage = (uint8_t *) resultMessage;
 
         CyDelay(1000);
         cyhal_uart_write(&gprs_uart, (void*)tx_buf, &lenght1);
@@ -311,7 +309,7 @@ void task_gprs(void* param) {
         CyDelay(1000);
         cyhal_uart_write(&gprs_uart, (void*)tx_buf2, &lenght3);
         CyDelay(1000);
-        cyhal_uart_write(&gprs_uart, (void*)trial, &lenght4);
+        cyhal_uart_write(&gprs_uart, (void*)castedMessage, &lenght4);
         CyDelay(1000);
         cyhal_uart_write(&gprs_uart, (void*)tx_buf4, &lenght5);
         CyDelay(5000);
