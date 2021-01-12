@@ -7,6 +7,7 @@
 #include "queue.h"
 #include "cy_pdl.h"
 #include <stdlib.h>
+#include <stdint.h>
 
 /*******************************************************************************
  * GPS HENDLER
@@ -67,17 +68,6 @@ const cyhal_uart_cfg_t uart_config =
     .rx_buffer_size = 0,
 };
 
-// for GPRS
-uint8_t tx_buf[3] = {'A', 'T', '\x0d'};
-size_t lenght1 = 3;
-uint8_t tx_buf1[10] = {'A', 'T', '+', 'C', 'M', 'G', 'F', '=', '1', '\x0d'};
-size_t lenght2 = 10;
-uint8_t tx_buf2[24] = {'A', 'T', '+', 'C', 'M', 'G', 'S', '=', '\x22', '+', '3', '8', '0', '9', '5', '8', '9', '5', '7', '8', '6', '5', '\x22', '\x0d'};
-size_t lenght3 = 24;
-uint8_t tx_buf3[5] = "Hello";
-size_t lenght4 = 100;
-uint8_t tx_buf4[1] = {'\032'};
-size_t lenght5 = 1;
 
 // GPRS
 cyhal_uart_t gprs_uart;
@@ -96,6 +86,25 @@ const cyhal_uart_cfg_t uart_config_gprs =
     .rx_buffer_size = 64,
 };
 
+// TIMER
+cyhal_timer_t timer_obj;
+static void isr_timer(void *callback_arg, cyhal_timer_event_t event);
+
+static void gprs_setup(void) {
+    cy_rslt_t rslt;
+    rslt = cyhal_gpio_init(P9_2, CYHAL_GPIO_DIR_OUTPUT, CYHAL_GPIO_DRIVE_STRONG, false);
+
+    if (rslt != CY_RSLT_SUCCESS) {
+        printf("Not powered\r\n");
+    }
+
+    cyhal_gpio_write(P9_2, false);
+    CyDelay(1000);
+    cyhal_gpio_write(P9_2, true);
+    CyDelay(2000);
+    cyhal_gpio_write(P9_2, false);
+    CyDelay(3000);
+}
 
 /*******************************************************************************
 * Function Name: main()
@@ -131,13 +140,13 @@ int main(void)
     }
 
     /* Initialize the user button */
-    result = cyhal_gpio_init(CYBSP_USER_BTN, CYHAL_GPIO_DIR_INPUT,
+    result = cyhal_gpio_init(P5_4, CYHAL_GPIO_DIR_INPUT,
                     CYHAL_GPIO_DRIVE_PULLUP, CYBSP_BTN_OFF);
 
     /* Configure GPIO interrupt */
-    cyhal_gpio_register_callback(CYBSP_USER_BTN, 
+    cyhal_gpio_register_callback(P5_4, 
                                  gpio_interrupt_handler, NULL);
-    cyhal_gpio_enable_event(CYBSP_USER_BTN, CYHAL_GPIO_IRQ_FALL, 
+    cyhal_gpio_enable_event(P5_4, CYHAL_GPIO_IRQ_FALL, 
                                  GPIO_INTERRUPT_PRIORITY, true);
 
      result = cyhal_uart_init(&gprs_uart, P9_1, P9_0, NULL, &uart_config_gprs);
@@ -146,6 +155,33 @@ int main(void)
         {
             result = cyhal_uart_set_baud(&gprs_uart, CY_RETARGET_IO_BAUDRATE, NULL);
         }
+
+    gprs_setup();
+
+    // TIMER
+    const cyhal_timer_cfg_t timer_cfg =
+    {
+        .compare_value = 0,                 /* Timer compare value, not used */
+        .period = 600*9999,                      /* Defines the timer period */
+        .direction = CYHAL_TIMER_DIR_UP,    /* Timer counts up */
+        .is_compare = false,                /* Don't use compare mode */
+        .is_continuous = true,              /* Run the timer indefinitely */
+        .value = 0                          /* Initial value of counter */
+    };
+    /* Initialize the timer object. Does not use pin output ('pin' is NC) and
+     * does not use a pre-configured clock source ('clk' is NULL). */
+    result = cyhal_timer_init(&timer_obj, NC, NULL);
+    CY_ASSERT(CY_RSLT_SUCCESS == result);
+    /* Apply timer configuration such as period, count direction, run mode, etc. */
+    result = cyhal_timer_configure(&timer_obj, &timer_cfg);
+    /* Set the frequency of timer to 10000 Hz */
+    result = cyhal_timer_set_frequency(&timer_obj, 10000);
+    /* Assign the ISR to execute on timer interrupt */
+    cyhal_timer_register_callback(&timer_obj, isr_timer, NULL);
+    /* Set the event on which timer interrupt occurs and enable it */
+    cyhal_timer_enable_event(&timer_obj, CYHAL_TIMER_IRQ_TERMINAL_COUNT, 3, true);
+    /* Start the timer with the configured settings */
+    result = cyhal_timer_start(&timer_obj);
 
     printf("***********************************************************\r\n");
     printf("PSoC 6 MCU UART and GPS\r\n");
@@ -209,7 +245,7 @@ void task_gps(void* param) {
     }
 
     /* GPS TASK */
-        uint8_t c = 0;
+    uint8_t c = 0;
     int k, index;
     //char that_time;
     char nmea[20], time[20];
@@ -295,23 +331,21 @@ void task_gprs(void* param) {
     while (1) {
         vTaskSuspend(NULL); //suspend itself
         
-        //printf("\r\n    Pressed Longitude and Latitude: %f, %f", longitude, latitude);
-        //printf("\r\n");
         sprintf(resultMessage, "Time: %s\r\nLatitude and Longitude: %f, %f", resultTime, latitude, longitude);
         printf("%s\r\n", resultMessage);
 
         castedMessage = (uint8_t *) resultMessage;
 
         CyDelay(1000);
-        cyhal_uart_write(&gprs_uart, (void*)tx_buf, &lenght1);
+        cyhal_uart_write_async(&gprs_uart, "AT\r", 3);
         CyDelay(1000);
-        cyhal_uart_write(&gprs_uart, (void*)tx_buf1, &lenght2);
+        cyhal_uart_write_async(&gprs_uart, "AT+CMGF=1\r", 10);
         CyDelay(1000);
-        cyhal_uart_write(&gprs_uart, (void*)tx_buf2, &lenght3);
+        cyhal_uart_write_async(&gprs_uart, "AT+CMGS=\"+380958957865\"\r", 24);
         CyDelay(1000);
-        cyhal_uart_write(&gprs_uart, (void*)castedMessage, &lenght4);
+        cyhal_uart_write_async(&gprs_uart, (void*)castedMessage, 100);
         CyDelay(1000);
-        cyhal_uart_write(&gprs_uart, (void*)tx_buf4, &lenght5);
+        cyhal_uart_putc(&gprs_uart, '\032');
         CyDelay(5000);
 
     }
@@ -321,7 +355,7 @@ void task_gprs(void* param) {
 * Function Name: gpio_interrupt_handler
 ********************************************************************************
 * Summary:
-*   GPIO interrupt handler.
+*   Button interrupt handler.
 *
 * Parameters:
 *  void *handler_arg (unused)
@@ -330,6 +364,27 @@ void task_gprs(void* param) {
 *******************************************************************************/
 static void gpio_interrupt_handler(void *handler_arg, cyhal_gpio_irq_event_t event)
 {
+    BaseType_t xHigherPriorityTaskWoken;
+    xHigherPriorityTaskWoken = xTaskResumeFromISR(gprsHandle);
+    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+}
+
+/*******************************************************************************
+* Function Name: gpio_interrupt_handler
+********************************************************************************
+* Summary:
+*   Timer interrupt handler.
+*
+* Parameters:
+*  void *callback_arg (unused)
+*  cyhal_timer_event_t (unused)
+*
+*******************************************************************************/
+static void isr_timer(void *callback_arg, cyhal_timer_event_t event)
+{
+    (void) callback_arg;
+    (void) event;
+
     BaseType_t xHigherPriorityTaskWoken;
     xHigherPriorityTaskWoken = xTaskResumeFromISR(gprsHandle);
     portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
