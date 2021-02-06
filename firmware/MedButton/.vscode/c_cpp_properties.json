@@ -53,7 +53,7 @@
         ],
         "mtbGccDefaultDefines": [
             "CY_USING_HAL",
-            "CY_APPNAME_mtb_example_psoc6_hello_world",
+            "CY_APPNAME_MedButton_First",
             "CY8C6347BZI_BLD53",
             "CY_TARGET_DEVICE=CY8C6347BZI_BLD53",
             "TARGET_CY8CKIT_062_BLE",

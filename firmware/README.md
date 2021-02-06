@@ -9,7 +9,16 @@ This project contain base project for MedButton development. In this project we 
 
 ## What is needed to start
 - With ModusShell go to d:\Git\MedButton2\firmware\MedButton\ and call `make getlibs`
-- After, call `make vscode`
+- Open project in VSCode by calling `code MedButton_First.code-workspace` inside `/firmware/MedButton` with ModusShell (or cygwin)
+- Connect UART pins - `P10.0` of the module to `P6` of programmer and `P10.1` of module to `P8` of programmer as on image:
+
+![Connection guidance](pics/module_mp4_connection.png)
+
+- On your PC, open terminal for `115200` baudrate and standard settings
+- You are done! Feel free to build and debug your project.
+
+## If you have problems with project, this needs to be done in addition for newly created project
+- Call `make vscode`
 - In `.vscode/launch.json` Replace `"Launch PSoC6 CM4 (KitProg3_MiniProg4)"` configuration with next:
 ```
 {
@@ -81,8 +90,3 @@ kitprog3 power_config on 3300
 ${TARGET}.cm4 configure -rtos auto -rtos-wipe-on-reset-halt 1
 psoc6 sflash_restrictions 1
 ```
-- Connect UART pins - `P10.0` of the module to `P6` of programmer and `P10.1` of module to `P8` of programmer as on image:
-
-![Connection guidance](pics/module_mp4_connection.png)
-
-- You are done! Feel free to build and debug your project.

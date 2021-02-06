@@ -21,9 +21,9 @@
         "cortex-debug.armToolchainPath": "${config:modustoolbox.toolsPath}/gcc/bin",
         "cortex-debug.openocdPath": "${config:modustoolbox.toolsPath}/openocd/bin/openocd",
         "workbench.colorCustomizations": {
-            "activityBar.background": "#352C25",
-            "titleBar.activeBackground": "#4A3D34",
-            "titleBar.activeForeground": "#FCFCFB"
+            "activityBar.background": "#482133",
+            "titleBar.activeBackground": "#642E47",
+            "titleBar.activeForeground": "#FCF9FA"
         }
     }
 }

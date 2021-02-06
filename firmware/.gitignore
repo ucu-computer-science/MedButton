@@ -10,6 +10,9 @@
 # ModusToolbox library repos or information about library dependencies
 MedButton/libs/
 
+# ModusToolbox libraries
+mtb_shared/
+
 # Eclipse IDE for ModusToolbox files
 .metadata/
 # .cyignore

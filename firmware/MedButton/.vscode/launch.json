@@ -94,7 +94,7 @@
             "type": "cortex-debug",
             "request": "attach",
             "cwd": "${workspaceRoot}",
-            "executable": "./build/CY8CKIT-062-BLE/Debug/mtb-example-psoc6-hello-world.elf",
+            "executable": "./build/CY8CKIT-062-BLE/Debug/MedButton_First.elf",
             "servertype": "openocd",
             "searchDir": [
                 "${workspaceRoot}",
@@ -133,7 +133,7 @@
             "type": "cortex-debug",
             "request": "launch",
             "cwd": "${workspaceRoot}",
-            "executable": "./build/CY8CKIT-062-BLE/Debug/mtb-example-psoc6-hello-world.hex",
+            "executable": "./build/CY8CKIT-062-BLE/Debug/MedButton_First.hex",
             "servertype": "openocd",
             "searchDir": [
                 "${workspaceRoot}",
@@ -160,7 +160,7 @@
             "type": "cortex-debug",
             "request": "launch",
             "cwd": "${workspaceRoot}",
-            "executable": "./build/CY8CKIT-062-BLE/Debug/mtb-example-psoc6-hello-world.hex",
+            "executable": "./build/CY8CKIT-062-BLE/Debug/MedButton_First.hex",
             "servertype": "openocd",
             "searchDir": [
                 "${workspaceRoot}",
@@ -171,7 +171,7 @@
             ],
             "overrideLaunchCommands": [
                 "monitor psoc6 sflash_restrictions 1",
-                "monitor program {./build/CY8CKIT-062-BLE/Debug/mtb-example-psoc6-hello-world.hex}",
+                "monitor program {./build/CY8CKIT-062-BLE/Debug/MedButton_First.hex}",
                 "monitor reset_config srst_only",
                 "monitor reset run",
                 "monitor psoc6.dap dpreg 0x04 0x00",
@@ -188,12 +188,12 @@
             "type": "cortex-debug",
             "request": "launch",
             "cwd": "${workspaceRoot}",
-            "executable": "./build/CY8CKIT-062-BLE/Debug/mtb-example-psoc6-hello-world.elf",
+            "executable": "./build/CY8CKIT-062-BLE/Debug/MedButton_First.elf",
             "servertype": "jlink",
             "device": "CY8C6xx7_CM4_sect256KB",
             "preLaunchCommands": [
                 // Program via the hex file to get complete coverage
-                "exec-file ./build/CY8CKIT-062-BLE/Debug/mtb-example-psoc6-hello-world.hex"
+                "exec-file ./build/CY8CKIT-062-BLE/Debug/MedButton_First.hex"
             ],
             "demangle": true,
             // svdFile is optional, it can be very large.
@@ -212,7 +212,7 @@
             "type": "cortex-debug",
             "request": "attach",
             "cwd": "${workspaceRoot}",
-            "executable": "./build/CY8CKIT-062-BLE/Debug/mtb-example-psoc6-hello-world.elf",
+            "executable": "./build/CY8CKIT-062-BLE/Debug/MedButton_First.elf",
             "servertype": "jlink",
             "device": "CY8C6xx7_CM4_sect256KB",
             "demangle": true,
@@ -227,7 +227,7 @@
             "request": "launch",
             "cwd": "${workspaceRoot}",
             // executable not needed but need some valid file to get the session to start
-            "executable": "./build/CY8CKIT-062-BLE/Debug/mtb-example-psoc6-hello-world.hex",
+            "executable": "./build/CY8CKIT-062-BLE/Debug/MedButton_First.hex",
             "servertype": "jlink",
             "device": "CY8C6xx7_CM0p_sect256KB_tm",
             "overrideLaunchCommands": [
@@ -245,7 +245,7 @@
             "request": "launch",
             "cwd": "${workspaceRoot}",
             // Program via the hex file to get complete coverage, no need for symbols
-            "executable": "./build/CY8CKIT-062-BLE/Debug/mtb-example-psoc6-hello-world.hex",
+            "executable": "./build/CY8CKIT-062-BLE/Debug/MedButton_First.hex",
             "servertype": "jlink",
             "device": "CY8C6xx7_CM0p_sect256KB_tm",
             "overrideLaunchCommands": [

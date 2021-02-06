@@ -40,7 +40,7 @@ TARGET=CY8CKIT-062-BLE
 # 
 # If APPNAME is edited, ensure to update or regenerate launch 
 # configurations for your IDE.
-APPNAME=mtb-example-psoc6-hello-world
+APPNAME=MedButton_First
 
 # Name of toolchain to use. Options include:
 #
