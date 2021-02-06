@@ -31,7 +31,7 @@
             "type": "cortex-debug",
             "request": "launch",
             "cwd": "${workspaceRoot}",
-            "executable": "./build/CY8CKIT-062-BLE/Debug/mtb-example-psoc6-hello-world.elf",
+            "executable": "./build/CY8CKIT-062-BLE/Debug/MedButton_First.elf",
             "servertype": "openocd",
             "searchDir": [
                 "${workspaceRoot}",
@@ -51,7 +51,7 @@
                 "set remotetimeout 15",
                 "monitor reset init",
                 // Comment this next line out if you don't want to reload program
-                "monitor program {./build/CY8CKIT-062-BLE/Debug/mtb-example-psoc6-hello-world.hex}",
+                "monitor program {./build/CY8CKIT-062-BLE/Debug/MedButton_First.hex}",
                 "monitor reset run",
                 "monitor sleep 200",
                 "monitor psoc6 reset_halt sysresetreq"

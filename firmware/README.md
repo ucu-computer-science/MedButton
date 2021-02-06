@@ -7,6 +7,8 @@ This project contain base project for MedButton development. In this project we 
 - LoRa code
 - other
 
+Warning: Module can't be debugged for first launch after connection. Problem is that host trying to aquire device before powering it up. So you need just restart debug after failure.
+
 ## What is needed to start
 - With ModusShell go to `firmware/MedButton/` and call `make getlibs`
 - Open project in VSCode by calling `code MedButton_First.code-workspace` inside `/firmware/MedButton` with ModusShell (or cygwin)
