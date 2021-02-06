@@ -1,0 +1,93 @@
+{
+    "version": 4,
+    "env": {
+        "mtbCompilerArgs": [
+            "-c",
+            "-mcpu=cortex-m4",
+            "--specs=nano.specs",
+            "-Og",
+            "-mfloat-abi=softfp",
+            "-mfpu=fpv4-sp-d16",
+            "-mthumb",
+            "-ffunction-sections",
+            "-fdata-sections",
+            "-ffat-lto-objects",
+            "-g",
+            "-Wall"
+        ],
+        "mtbGccDefaultIncludePath": [
+            ".",
+            "./OnethinxCore",
+            "../mtb_shared/TARGET_CY8CKIT-062-BLE/latest-v2.X",
+            "../mtb_shared/capsense/latest-v2.X",
+            "../mtb_shared/core-lib/latest-v1.X",
+            "../mtb_shared/core-lib/latest-v1.X/include",
+            "../mtb_shared/freertos/latest-v10.X",
+            "../mtb_shared/freertos/latest-v10.X/Source",
+            "../mtb_shared/freertos/latest-v10.X/Source/include",
+            "../mtb_shared/freertos/latest-v10.X/Source/portable",
+            "../mtb_shared/freertos/latest-v10.X/Source/portable/TOOLCHAIN_GCC_ARM",
+            "../mtb_shared/freertos/latest-v10.X/Source/portable/TOOLCHAIN_GCC_ARM/CM4F",
+            "../mtb_shared/mtb-hal-cat1/latest-v1.X",
+            "../mtb_shared/mtb-hal-cat1/latest-v1.X/COMPONENT_PSOC6HAL",
+            "../mtb_shared/mtb-hal-cat1/latest-v1.X/COMPONENT_PSOC6HAL/include",
+            "../mtb_shared/mtb-hal-cat1/latest-v1.X/COMPONENT_PSOC6HAL/include/pin_packages",
+            "../mtb_shared/mtb-hal-cat1/latest-v1.X/COMPONENT_PSOC6HAL/include/triggers",
+            "../mtb_shared/mtb-hal-cat1/latest-v1.X/include",
+            "../mtb_shared/mtb-pdl-cat1/latest-v2.X",
+            "../mtb_shared/mtb-pdl-cat1/latest-v2.X/cmsis",
+            "../mtb_shared/mtb-pdl-cat1/latest-v2.X/cmsis/include",
+            "../mtb_shared/mtb-pdl-cat1/latest-v2.X/devices",
+            "../mtb_shared/mtb-pdl-cat1/latest-v2.X/devices/COMPONENT_CAT1A",
+            "../mtb_shared/mtb-pdl-cat1/latest-v2.X/devices/COMPONENT_CAT1A/include",
+            "../mtb_shared/mtb-pdl-cat1/latest-v2.X/devices/COMPONENT_CAT1A/include/ip",
+            "../mtb_shared/mtb-pdl-cat1/latest-v2.X/drivers",
+            "../mtb_shared/mtb-pdl-cat1/latest-v2.X/drivers/include",
+            "../mtb_shared/retarget-io/latest-v1.X",
+            "${config:modustoolbox.toolsPath}/gcc/lib/gcc/arm-none-eabi/9.3.1/include",
+            "${config:modustoolbox.toolsPath}/gcc/lib/gcc/arm-none-eabi/9.3.1/include-fixed",
+            "${config:modustoolbox.toolsPath}/gcc/arm-none-eabi/include",
+            "${config:modustoolbox.toolsPath}/gcc/arm-none-eabi/include/c++/9.3.1",
+            "${config:modustoolbox.toolsPath}/gcc/arm-none-eabi/include/c++/9.3.1/arm-none-eabi/thumb/v7e-m/fpv4-sp/hard",
+            "${config:modustoolbox.toolsPath}/gcc/arm-none-eabi/include/c++/9.3.1/backward"
+        ],
+        "mtbGccDefaultDefines": [
+            "CY_USING_HAL",
+            "CY_APPNAME_MedButton_First",
+            "CY8C6347BZI_BLD53",
+            "CY_TARGET_DEVICE=CY8C6347BZI_BLD53",
+            "TARGET_CY8CKIT_062_BLE",
+            "CY_TARGET_BOARD=CY8CKIT_062_BLE",
+            "COMPONENT_CAT1A",
+            "COMPONENT_CM0P_SLEEP",
+            "COMPONENT_CM4",
+            "COMPONENT_PSOC6HAL",
+            "COMPONENT_SOFTFP",
+            "DEBUG",
+            "__GNUC__"
+        ]
+    },
+    "configurations": [
+        {
+            "name": "MTB",
+            "compilerPath": "${config:modustoolbox.toolsPath}/gcc/bin/arm-none-eabi-gcc",
+            "compilerArgs": [
+                "${mtbCompilerArgs}"
+            ],
+            "compileCommands": "./build/compile_commands.json",
+            "intelliSenseMode": "gcc-x86",
+            "cStandard": "c99",
+            "cppStandard": "c++11",
+            "includePath": [
+                "${mtbGccDefaultIncludePath}"
+            ],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "databaseFilename": ""
+            },
+            "defines": [
+                "${mtbGccDefaultDefines}"
+            ]
+        }
+    ]
+}
