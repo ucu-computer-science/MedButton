@@ -8,7 +8,7 @@ This project contain base project for MedButton development. In this project we 
 - other
 
 ## What is needed to start
-- With ModusShell go to d:\Git\MedButton2\firmware\MedButton\ and call `make getlibs`
+- With ModusShell go to `firmware/MedButton/` and call `make getlibs`
 - Open project in VSCode by calling `code MedButton_First.code-workspace` inside `/firmware/MedButton` with ModusShell (or cygwin)
 - Connect UART pins - `P10.0` of the module to `P6` of programmer and `P10.1` of module to `P8` of programmer as on image:
 
