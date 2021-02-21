@@ -19,16 +19,16 @@ uint8_t TXbuffer[64];
 #define TASK_GPS_STACK_SIZE         (256u)
 
 coreConfiguration_t	coreConfig = {
-	.Join.KeysPtr = 		&TTN_OTAAkeys,
-	.Join.DataRate =		DR_AUTO,
-	.Join.Power =			PWR_MAX,
-	.Join.MAXTries = 		100,
+    .Join.KeysPtr = 		&TTN_OTAAkeys,
+    .Join.DataRate =		DR_AUTO,
+    .Join.Power =			PWR_MAX,
+    .Join.MAXTries = 		100,
     .Join.SubBand_1st =     EU_SUB_BANDS_DEFAULT,
-	.Join.SubBand_2nd =     EU_SUB_BANDS_DEFAULT,
-	.TX.Confirmed = 		false,
-	.TX.DataRate = 			DR_0,
-	.TX.Power = 			PWR_MAX,
-	.TX.FPort = 			1,
+    .Join.SubBand_2nd =     EU_SUB_BANDS_DEFAULT,
+    .TX.Confirmed = 		false,
+    .TX.DataRate = 			DR_0,
+    .TX.Power = 			PWR_MAX,
+    .TX.FPort = 			1,
 };
 
 
@@ -84,21 +84,22 @@ int main(void){
         CY_ASSERT(0);
     }
 
-	/* Initialize the user button */
-    result = cyhal_gpio_init(P9_2, CYHAL_GPIO_DIR_INPUT,
-                    CYHAL_GPIO_DRIVE_PULLUP, CYBSP_BTN_OFF);
-
-	/* Configure GPIO interrupt */
-    cyhal_gpio_register_callback(P9_2,
-                                 gpio_interrupt_handler, NULL);
-    cyhal_gpio_enable_event(P9_2, CYHAL_GPIO_IRQ_FALL, 
-                                 GPIO_INTERRUPT_PRIORITY, true);
-
     /* Enable global interrupts */
     __enable_irq();
 
     /* Initialize retarget-io to use the debug UART port */
     result = cy_retarget_io_init(P10_1, P10_0, CY_RETARGET_IO_BAUDRATE);
+
+    /* Initialize the user button */
+    result = cyhal_gpio_init(P0_4, CYHAL_GPIO_DIR_INPUT, CYHAL_GPIO_DRIVE_NONE, CYBSP_BTN_OFF);
+    if (result != CY_RSLT_SUCCESS)
+    {
+        printf("Failed to init button!\n");
+    }
+
+    /* Configure GPIO interrupt */
+    cyhal_gpio_register_callback(P0_4, gpio_interrupt_handler, NULL);
+    cyhal_gpio_enable_event(P0_4, CYHAL_GPIO_IRQ_RISE, CYHAL_ISR_PRIORITY_DEFAULT, true);
 
     CY_ASSERT(CY_RSLT_SUCCESS == cyhal_gpio_init(LED_BLUE, CYHAL_GPIO_DIR_OUTPUT, CYHAL_GPIO_DRIVE_STRONG, false));
     CY_ASSERT(CY_RSLT_SUCCESS == cyhal_gpio_init(LED_RED, CYHAL_GPIO_DIR_OUTPUT, CYHAL_GPIO_DRIVE_STRONG, false));
@@ -114,23 +115,23 @@ int main(void){
 
     coreStatus = LoRaWAN_Init(&coreConfig);
     /* Check Onethinx Core info */
-	LoRaWAN_GetInfo(&coreInfo);
+    LoRaWAN_GetInfo(&coreInfo);
     /* send join using parameters in coreConfig, blocks until either success or MAXtries */
-	coreStatus = LoRaWAN_Join(true);
+    coreStatus = LoRaWAN_Join(true);
 
 
     /* check for successful join */
-	if (!coreStatus.mac.isJoined){
-		while(1) {
-			cyhal_gpio_toggle(LED_BLUE);
-			CyDelay(100);
-		}
-	} else {
+    if (!coreStatus.mac.isJoined){
+        while(1) {
+            cyhal_gpio_toggle(LED_BLUE);
+            CyDelay(100);
+        }
+    } else {
         printf("Joined network successfully!\n");
         cyhal_gpio_write(LED_BLUE, true);
-		/*delay before first message will be sent */
-		CyDelay(1000);
-	}
+        /*delay before first message will be sent */
+        CyDelay(1000);
+    }
 
     cyhal_uart_t gps_uart;
 
@@ -223,29 +224,29 @@ int main(void){
 }
 
 void str_to_hex(void) {
-	char message[29];
-	sprintf(message, "%s,%f,%f", resultTime, longitude, latitude);
-	uint8_t j=0;
-	for (int i = 0; i < 29; ++i)
-    	TXbuffer[j++] = message[i] & 0xff;
+    char message[29];
+    sprintf(message, "%s,%f,%f", resultTime, longitude, latitude);
+    uint8_t j=0;
+    for (int i = 0; i < 29; ++i)
+        TXbuffer[j++] = message[i] & 0xff;
 }
 
 void lora_send(void) {
-	cyhal_gpio_write(LED_BLUE, true);
-	str_to_hex();
-	coreStatus = LoRaWAN_Send((uint8_t *) TXbuffer, 29, true);
-	CyDelay(1000);
-	if( coreStatus.system.errorStatus == system_BusyError ){
-		for(int i=0; i<10; i++){
-			cyhal_gpio_toggle(LED_BLUE);;
-			CyDelay(100);
-		}
-	}
-	else
-	{
-		printf("Sent a message!\n");
-	}
-	cyhal_gpio_write(LED_BLUE, false);
+    cyhal_gpio_write(LED_BLUE, true);
+    str_to_hex();
+    coreStatus = LoRaWAN_Send((uint8_t *) TXbuffer, 29, true);
+    CyDelay(1000);
+    if( coreStatus.system.errorStatus == system_BusyError ){
+        for(int i=0; i<10; i++){
+            cyhal_gpio_toggle(LED_BLUE);;
+            CyDelay(100);
+        }
+    }
+    else
+    {
+        printf("Sent a message!\n");
+    }
+    cyhal_gpio_write(LED_BLUE, false);
 }
 
 static void gpio_interrupt_handler(void *handler_arg, cyhal_gpio_irq_event_t event)
