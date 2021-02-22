@@ -66,9 +66,11 @@ const cyhal_uart_cfg_t uart_config_gprs =
     .data_bits = 8,
     .stop_bits = 1,
     .parity = CYHAL_UART_PARITY_NONE,
-    .rx_buffer = rx_buf,
-    .rx_buffer_size = 64,
+    .rx_buffer = NULL,
+    .rx_buffer_size = 0,
 };
+
+bool call_gprs_task;
 
 void task_gprs(void);
 
@@ -113,12 +115,23 @@ int main(void){
         CY_ASSERT(0);
     }
 
+    result = cyhal_uart_init(&gprs_uart, P9_1, P9_0, NULL, &uart_config_gprs);
+    if (result != CY_RSLT_SUCCESS)
+    {
+        CY_ASSERT(0);
+    }
+
+    result = cyhal_uart_set_baud(&gprs_uart, 115200, NULL);
+    if (result != CY_RSLT_SUCCESS)
+    {
+        CY_ASSERT(0);
+    }
+
     coreStatus = LoRaWAN_Init(&coreConfig);
     /* Check Onethinx Core info */
     LoRaWAN_GetInfo(&coreInfo);
     /* send join using parameters in coreConfig, blocks until either success or MAXtries */
     coreStatus = LoRaWAN_Join(true);
-
 
     /* check for successful join */
     if (!coreStatus.mac.isJoined){
@@ -142,13 +155,6 @@ int main(void){
     //     result = cyhal_uart_set_baud(&gps_uart, 9600, NULL);
     // }
 
-    result = cyhal_uart_init(&gprs_uart, P9_1, P9_0, NULL, &uart_config_gprs);
-
-    if (result == CY_RSLT_SUCCESS)
-        {
-            result = cyhal_uart_set_baud(&gprs_uart, CY_RETARGET_IO_BAUDRATE, NULL);
-        }
-
     /* GPS TASK */
     uint8_t c = 0;
     int k, index;
@@ -162,7 +168,15 @@ int main(void){
     for (;;)
     {
         printf("Testing\n");
-        cyhal_system_delay_ms(1000);
+        if (call_gprs_task)
+        {
+            task_gprs();
+            call_gprs_task = false;
+        }
+        else
+        {
+            cyhal_system_delay_ms(1000);
+        }
         // if (cyhal_uart_getc(&gps_uart, &c, 0) == CY_RSLT_SUCCESS)
         // {
         //     if (c)
@@ -251,7 +265,7 @@ void lora_send(void) {
 
 static void gpio_interrupt_handler(void *handler_arg, cyhal_gpio_irq_event_t event)
 {
-    task_gprs();
+    call_gprs_task = true;
 }
 
 float NMEAtoDecimalDegrees(const char *degree, char quadrant)
@@ -295,10 +309,26 @@ char *UTCtoKyivTime(const char *utcTime)
 uint8_t rx_buf[64];
 size_t rx_length = 64;
 
+void wait_uart_free(cyhal_uart_t *uart_obj)
+{
+    while (cyhal_uart_is_rx_active(uart_obj)) { cyhal_system_delay_ms(1); }
+    while (cyhal_uart_is_tx_active(uart_obj)) { cyhal_system_delay_ms(1); }
+}
+
 void uart_send_cmd_and_wait(char *cmd, size_t cmd_len, cyhal_uart_t *uart_obj)
 {
-    cyhal_uart_clear(uart_obj);
-    if (CY_RSLT_SUCCESS != cyhal_uart_write_async(uart_obj, cmd, cmd_len))
+    cy_rslt_t result;
+    wait_uart_free(uart_obj);
+    if (cmd_len > 1)
+    {
+        result = cyhal_uart_write_async(uart_obj, cmd, cmd_len);
+    }
+    else
+    {
+        result = cyhal_uart_putc(uart_obj, cmd[0]);
+    }
+
+    if (CY_RSLT_SUCCESS != result)
     {
         while(1)
         {
@@ -306,8 +336,23 @@ void uart_send_cmd_and_wait(char *cmd, size_t cmd_len, cyhal_uart_t *uart_obj)
             cyhal_system_delay_ms(100);
         }
     }
-    //while (cyhal_uart_is_tx_active(uart_obj)) { cyhal_system_delay_ms(1); }
-    cyhal_system_delay_ms(3000);
+
+    wait_uart_free(uart_obj);
+    bool data_received = false;
+    while(cyhal_uart_readable(uart_obj) != 0)
+    {
+        data_received = true;
+        char received_char;
+        if (CY_RSLT_SUCCESS == cyhal_uart_getc(uart_obj, &received_char, 1))
+        {
+            printf("%c", received_char);
+        }
+    }
+    if (data_received)
+    {
+        printf("\n");
+    }
+    cyhal_system_delay_ms(1000);
 }
 
 void task_gprs(void) {
@@ -321,72 +366,20 @@ void task_gprs(void) {
     CyDelay(1000);
     
     char at_cmd[] = "AT\r";
-    size_t at_cmd_len = sizeof(at_cmd);
-
-    if (CY_RSLT_SUCCESS != cyhal_uart_write(&gprs_uart, at_cmd, &at_cmd_len))
-    {
-        while(1)
-        {
-            cyhal_gpio_toggle(LED_RED);
-            cyhal_system_delay_ms(100);
-        }
-    }
-    CyDelay(100);
-    cyhal_uart_clear(&gprs_uart);
-    // while(cyhal_uart_readable(&gprs_uart) == 0){
-
-    // }
-    // if (CY_RSLT_SUCCESS == cyhal_uart_read(&gprs_uart, (void*)rx_buf, &rx_length)) 
-    // {
-    //     printf("UART AT READ SUCCESS!\n");
-    //         rx_buf[63] = '\0';
-    // sprintf(resultMessage, "%s", rx_buf);
-    // printf("%s\r\n", resultMessage);
-    // }
+    uart_send_cmd_and_wait(at_cmd, sizeof(at_cmd), &gprs_uart);
 
     // CALLING WORKING
 
-    //char call_cmd[] = "ATD+ +380958957865;\r";
-    //if (CY_RSLT_SUCCESS != cyhal_uart_write_async(&gprs_uart, call_cmd, sizeof(call_cmd)))
-    //{
-        //while(1)
-        //{
-//            cyhal_gpio_toggle(LED_RED);
-            //cyhal_system_delay_ms(100);
-        //}
-    //}
-    //CyDelay(100);
-
-
-    
-    // cyhal_uart_read(&gprs_uart, (void*)rx_buf, &rx_length);
-    // rx_buf[63] = '\0';
-    // sprintf(resultMessage, "%s", rx_buf);
-    // printf("%s\r\n", resultMessage);
+    //char call_cmd[] = "ATD+ +380679772051;\r";
+    //uart_send_cmd_and_wait(call_cmd, sizeof(call_cmd), &gprs_uart);
     
 
     char sms_config_cmd[] = "AT+CMGF=1\r";
     uart_send_cmd_and_wait(sms_config_cmd, sizeof(sms_config_cmd), &gprs_uart);
-    // No transfer is active anymore
-    char sms_prepare_cmd[] = "AT+CMGS=\"+380958957865\"\r";
+    char sms_prepare_cmd[] = "AT+CMGS=\"+380679772051\"\r";
     uart_send_cmd_and_wait(sms_prepare_cmd, sizeof(sms_prepare_cmd), &gprs_uart);
-    char sms_text_cmd[] = "Latitude : 24.0003, Longitude : 24.33334\r";
+    char sms_text_cmd[] = "Lat: 23.0005, Long: 24.0001";
     uart_send_cmd_and_wait(sms_text_cmd, sizeof(sms_text_cmd), &gprs_uart);
-    size_t sms_end_cmd_len = 1;
-    if (CY_RSLT_SUCCESS != cyhal_uart_putc(&gprs_uart, '\032'))
-    {
-         while(1)
-        {
-            cyhal_gpio_toggle(LED_RED);
-            cyhal_system_delay_ms(100);
-        }   
-    }
-    // CyDelay(1000);
-    // cyhal_uart_write_async(&gprs_uart, , 24);
-    // CyDelay(1000);
-    // cyhal_uart_write_async(&gprs_uart, (void*)castedMessage, 100);
-    // CyDelay(1000);
-    // cyhal_uart_putc(&gprs_uart, );
-    CyDelay(5000);
-
+    char sms_stop_cmd[] = { (char)26 };
+    uart_send_cmd_and_wait(sms_stop_cmd, 1, &gprs_uart);
 }
