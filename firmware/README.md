@@ -1,4 +1,4 @@
-# First MedButton LoRa project in MTB2.2 environment
+# First MedButton LoRa project in MTB2.3 environment
 
 This project contain base project for MedButton development. In this project we are finaly able to have all needed for us parts such as:
 - FreeRTOS
