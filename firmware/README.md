@@ -10,7 +10,8 @@ This project contain base project for MedButton development. In this project we 
 Warning: Module can't be debugged for first launch after connection. Problem is that host trying to aquire device before powering it up. So you need just restart debug after failure.
 
 ## What is needed to start
-- With ModusShell go to `firmware/MedButton/` and call `make getlibs`
+- With help of `C:\Users\YOUR_USER\ModusToolbox\tools_2.3\library-manager\library-manager.exe` open `firmware` Directory and `MedButton` project and update libraries with `Update` button:
+![Library manager](pics/library_manager.png)
 - Open project in VSCode by calling `code MedButton_First.code-workspace` inside `/firmware/MedButton` with ModusShell (or cygwin)
 - Connect UART pins - `P10.0` of the module to `P6` of programmer and `P10.1` of module to `P8` of programmer as on image:
 
@@ -28,7 +29,7 @@ Warning: Module can't be debugged for first launch after connection. Problem is 
     "type": "cortex-debug",
     "request": "launch",
     "cwd": "${workspaceRoot}",
-    "executable": "./build/CY8CKIT-062-BLE/Debug/mtb-example-psoc6-hello-world.elf",
+    "executable": "./build/CY8CKIT-062-BLE/Debug/MedButton_First.elf",
     "servertype": "openocd",
     "searchDir": [
         "${workspaceRoot}",
@@ -37,7 +38,7 @@ Warning: Module can't be debugged for first launch after connection. Problem is 
     "openOCDPreConfigLaunchCommands": [
         "set PROGRAMMER kitprog3",
         "set ENABLE_ACQUIRE 0",
-        "set ENABLE_CM0 0",
+        "set ENABLE_CM0 0"
     ],
     "configFiles": [
         "openocd.tcl"
@@ -46,16 +47,16 @@ Warning: Module can't be debugged for first launch after connection. Problem is 
         "set mem inaccessible-by-default off",
         "-enable-pretty-printing",
         "set remotetimeout 15",
-        "monitor reset init",
         // Comment this next line out if you don't want to reload program
-        "monitor program {./build/CY8CKIT-062-BLE/Debug/mtb-example-psoc6-hello-world.hex}",
+        "monitor program {./build/CY8CKIT-062-BLE/Debug/MedButton_First.hex}",
         "monitor reset run",
         "monitor sleep 200",
         "monitor psoc6 reset_halt sysresetreq"
     ],
     "numberOfProcessors": 1,
     "targetProcessor": 1,  // Set to 0 for the CM0+, set to 1 for the CM4
-    "postStartSessionCommands": [       // Needed if runToMain is false
+    "postStartSessionCommands": [
+        // Needed if runToMain is false
         // Following two commands are needed to get gdb and openocd and HW all in sync.
         // Or, execution context (PC, stack, registers, etc.) look like they are from before reset.
         // The stepi, is a pretend instruction that does not actually do a stepi, but MUST be done
