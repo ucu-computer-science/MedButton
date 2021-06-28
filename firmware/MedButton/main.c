@@ -1,5 +1,7 @@
 #include "cyhal.h"
 #include "cybsp.h"
+#include "FreeRTOS.h"
+#include "task.h"
 #include "cy_retarget_io.h"
 #include "OnethinxCore01.h"
 #include "LoRaWAN_keys.h"
