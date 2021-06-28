@@ -1,4 +1,4 @@
-# First MedButton LoRa project in MTB2.2 environment
+# First MedButton LoRa project in MTB2.3 environment
 
 This project contain base project for MedButton development. In this project we are finaly able to have all needed for us parts such as:
 - FreeRTOS
@@ -10,17 +10,10 @@ This project contain base project for MedButton development. In this project we 
 Warning: Module can't be debugged for first launch after connection. Problem is that host trying to aquire device before powering it up. So you need just restart debug after failure.
 
 ## What is needed to start
-- With ModusShell go to `firmware/MedButton/` and call `make getlibs`
+- With help of `C:\Users\YOUR_USER\ModusToolbox\tools_2.3\library-manager\library-manager.exe` open `firmware` Directory and `MedButton` project and update libraries with `Update` button:
+![Library manager](pics/library_manager.png)
+- Inside `\firmware\MedButton\` call `make vscode` with ModusShell (or cygwin) 
 - Open project in VSCode by calling `code MedButton_First.code-workspace` inside `/firmware/MedButton` with ModusShell (or cygwin)
-- Connect UART pins - `P10.0` of the module to `P6` of programmer and `P10.1` of module to `P8` of programmer as on image:
-
-![Connection guidance](pics/module_mp4_connection.png)
-
-- On your PC, open terminal for `115200` baudrate and standard settings
-- You are done! Feel free to build and debug your project.
-
-## If you have problems with project, this needs to be done in addition for newly created project
-- Call `make vscode`
 - In `.vscode/launch.json` Replace `"Launch PSoC6 CM4 (KitProg3_MiniProg4)"` configuration with next:
 ```
 {
@@ -28,7 +21,7 @@ Warning: Module can't be debugged for first launch after connection. Problem is 
     "type": "cortex-debug",
     "request": "launch",
     "cwd": "${workspaceRoot}",
-    "executable": "./build/CY8CKIT-062-BLE/Debug/mtb-example-psoc6-hello-world.elf",
+    "executable": "./build/CY8CKIT-062-BLE/Debug/MedButton_First.elf",
     "servertype": "openocd",
     "searchDir": [
         "${workspaceRoot}",
@@ -37,7 +30,7 @@ Warning: Module can't be debugged for first launch after connection. Problem is 
     "openOCDPreConfigLaunchCommands": [
         "set PROGRAMMER kitprog3",
         "set ENABLE_ACQUIRE 0",
-        "set ENABLE_CM0 0",
+        "set ENABLE_CM0 0"
     ],
     "configFiles": [
         "openocd.tcl"
@@ -46,16 +39,16 @@ Warning: Module can't be debugged for first launch after connection. Problem is 
         "set mem inaccessible-by-default off",
         "-enable-pretty-printing",
         "set remotetimeout 15",
-        "monitor reset init",
         // Comment this next line out if you don't want to reload program
-        "monitor program {./build/CY8CKIT-062-BLE/Debug/mtb-example-psoc6-hello-world.hex}",
+        "monitor program {./build/CY8CKIT-062-BLE/Debug/MedButton_First.hex}",
         "monitor reset run",
         "monitor sleep 200",
         "monitor psoc6 reset_halt sysresetreq"
     ],
     "numberOfProcessors": 1,
     "targetProcessor": 1,  // Set to 0 for the CM0+, set to 1 for the CM4
-    "postStartSessionCommands": [       // Needed if runToMain is false
+    "postStartSessionCommands": [
+        // Needed if runToMain is false
         // Following two commands are needed to get gdb and openocd and HW all in sync.
         // Or, execution context (PC, stack, registers, etc.) look like they are from before reset.
         // The stepi, is a pretend instruction that does not actually do a stepi, but MUST be done
@@ -92,3 +85,9 @@ kitprog3 power_config on 3300
 ${TARGET}.cm4 configure -rtos auto -rtos-wipe-on-reset-halt 1
 psoc6 sflash_restrictions 1
 ```
+- Connect UART pins - `P10.0` of the module to `P6` of programmer and `P10.1` of module to `P8` of programmer as on image:
+
+![Connection guidance](pics/module_mp4_connection.png)
+
+- On your PC, open terminal for `115200` baudrate and standard settings
+- You are done! Feel free to build and debug your project.
