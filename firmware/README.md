@@ -12,16 +12,8 @@ Warning: Module can't be debugged for first launch after connection. Problem is 
 ## What is needed to start
 - With help of `C:\Users\YOUR_USER\ModusToolbox\tools_2.3\library-manager\library-manager.exe` open `firmware` Directory and `MedButton` project and update libraries with `Update` button:
 ![Library manager](pics/library_manager.png)
+- Inside `\firmware\MedButton\` call `make vscode` with ModusShell (or cygwin) 
 - Open project in VSCode by calling `code MedButton_First.code-workspace` inside `/firmware/MedButton` with ModusShell (or cygwin)
-- Connect UART pins - `P10.0` of the module to `P6` of programmer and `P10.1` of module to `P8` of programmer as on image:
-
-![Connection guidance](pics/module_mp4_connection.png)
-
-- On your PC, open terminal for `115200` baudrate and standard settings
-- You are done! Feel free to build and debug your project.
-
-## If you have problems with project, this needs to be done in addition for newly created project
-- Call `make vscode`
 - In `.vscode/launch.json` Replace `"Launch PSoC6 CM4 (KitProg3_MiniProg4)"` configuration with next:
 ```
 {
@@ -93,3 +85,9 @@ kitprog3 power_config on 3300
 ${TARGET}.cm4 configure -rtos auto -rtos-wipe-on-reset-halt 1
 psoc6 sflash_restrictions 1
 ```
+- Connect UART pins - `P10.0` of the module to `P6` of programmer and `P10.1` of module to `P8` of programmer as on image:
+
+![Connection guidance](pics/module_mp4_connection.png)
+
+- On your PC, open terminal for `115200` baudrate and standard settings
+- You are done! Feel free to build and debug your project.
