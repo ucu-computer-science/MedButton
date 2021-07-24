@@ -19,6 +19,9 @@
         //mtb//
         "modustoolbox.toolsPath": "C:/Users/Deer/ModusToolbox/tools_2.3",
         "cortex-debug.armToolchainPath": "${config:modustoolbox.toolsPath}/gcc/bin",
-        "cortex-debug.openocdPath": "${config:modustoolbox.toolsPath}/openocd/bin/openocd"
+        "cortex-debug.openocdPath": "${config:modustoolbox.toolsPath}/openocd/bin/openocd",
+        "files.associations": {
+            "onethinxcore01.h": "c"
+        }
     }
 }

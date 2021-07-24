@@ -37,6 +37,11 @@
                 "${workspaceRoot}",
                 "${config:modustoolbox.toolsPath}/openocd/scripts/"
             ],
+            "openOCDPreConfigLaunchCommands": [
+                "set PROGRAMMER kitprog3",
+                "set ENABLE_ACQUIRE 0",
+                "set ENABLE_CM0 0"
+            ],
             "configFiles": [
                 "openocd.tcl"
             ],
@@ -50,16 +55,16 @@
                 "monitor sleep 200",
                 "monitor psoc6 reset_halt sysresetreq"
             ],
-            "numberOfProcessors": 2,
+            "numberOfProcessors": 1,
             "targetProcessor": 1,  // Set to 0 for the CM0+, set to 1 for the CM4
-            "postStartSessionCommands": [       
-                // Needed if runToMain is false 
-                // Following two commands are needed to get gdb and openocd and HW all in sync. 
-                // Or, execution context (PC, stack, registers, etc.) look like they are from before reset. 
-                // The stepi, is a pretend instruction that does not actually do a stepi, but MUST be done 
-                // Its a documented workaround in openocd. Do a 'monitor help' to see more info 
-                // 
-                // An alternative command to use is "continue" instead of the following two 
+            "postStartSessionCommands": [
+                // Needed if runToMain is false
+                // Following two commands are needed to get gdb and openocd and HW all in sync.
+                // Or, execution context (PC, stack, registers, etc.) look like they are from before reset.
+                // The stepi, is a pretend instruction that does not actually do a stepi, but MUST be done
+                // Its a documented workaround in openocd. Do a 'monitor help' to see more info
+                //
+                // An alternative command to use is "continue" instead of the following two
                 "monitor gdb_sync",
                 "stepi"
             ],
