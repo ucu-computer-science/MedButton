@@ -40,7 +40,7 @@
             "openOCDPreConfigLaunchCommands": [
                 "set PROGRAMMER kitprog3",
                 "set ENABLE_ACQUIRE 0",
-                "set ENABLE_CM0 0",
+                "set ENABLE_CM0 0"
             ],
             "configFiles": [
                 "openocd.tcl"
@@ -49,7 +49,6 @@
                 "set mem inaccessible-by-default off",
                 "-enable-pretty-printing",
                 "set remotetimeout 15",
-                "monitor reset init",
                 // Comment this next line out if you don't want to reload program
                 "monitor program {./build/CY8CKIT-062-BLE/Debug/MedButton_First.hex}",
                 "monitor reset run",
@@ -58,7 +57,8 @@
             ],
             "numberOfProcessors": 1,
             "targetProcessor": 1,  // Set to 0 for the CM0+, set to 1 for the CM4
-            "postStartSessionCommands": [       // Needed if runToMain is false
+            "postStartSessionCommands": [
+                // Needed if runToMain is false
                 // Following two commands are needed to get gdb and openocd and HW all in sync.
                 // Or, execution context (PC, stack, registers, etc.) look like they are from before reset.
                 // The stepi, is a pretend instruction that does not actually do a stepi, but MUST be done
@@ -108,8 +108,7 @@
             ],
             "overrideAttachCommands": [
                 "set mem inaccessible-by-default off",
-                "-enable-pretty-printing",
-                "monitor halt"
+                "-enable-pretty-printing"
             ],
             "numberOfProcessors": 2,
             "targetProcessor": 1,  // Set to 0 for the CM0+, set to 1 for the CM4
@@ -231,9 +230,9 @@
             "servertype": "jlink",
             "device": "CY8C6xx7_CM0p_sect256KB_tm",
             "overrideLaunchCommands": [
-                "monitor reset 2",      // Reset via the reset pin
-                "monitor flash erase",
                 "monitor reset 0",      // Reset both core and the peripherals
+                "monitor flash erase",
+                "monitor reset 2",      // Reset via the reset pin
                 "quit"
             ],
             "showDevDebugOutput": false // When set to true, displays output of GDB.
@@ -249,9 +248,9 @@
             "servertype": "jlink",
             "device": "CY8C6xx7_CM0p_sect256KB_tm",
             "overrideLaunchCommands": [
-                "monitor reset 2",      // Reset via the reset pin
-                "-target-download",
                 "monitor reset 0",      // Reset both core and the peripherals
+                "-target-download",
+                "monitor reset 2",      // Reset via the reset pin
                 "monitor go",
                 "quit"
             ],

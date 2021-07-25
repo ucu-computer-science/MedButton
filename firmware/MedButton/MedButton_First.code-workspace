@@ -17,13 +17,11 @@
         //mtb//      macOS  : $HOME/Library/Application Support/Code/User/settings.json
         //mtb//      Linux  : $HOME/.config/Code/User/settings.json
         //mtb//
-        "modustoolbox.toolsPath": "C:/Users/maksy/ModusToolbox/tools_2.2",
+        "modustoolbox.toolsPath": "C:/Users/Deer/ModusToolbox/tools_2.3",
         "cortex-debug.armToolchainPath": "${config:modustoolbox.toolsPath}/gcc/bin",
         "cortex-debug.openocdPath": "${config:modustoolbox.toolsPath}/openocd/bin/openocd",
-        "workbench.colorCustomizations": {
-            "activityBar.background": "#482133",
-            "titleBar.activeBackground": "#642E47",
-            "titleBar.activeForeground": "#FCF9FA"
+        "files.associations": {
+            "onethinxcore01.h": "c"
         }
     }
 }

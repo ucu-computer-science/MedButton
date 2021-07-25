@@ -1,32 +1,44 @@
 #include "cyhal.h"
 #include "cybsp.h"
+#include "cy_retarget_io.h"
+#include "cy_pdl.h"
+#include <stdlib.h>
 #include "FreeRTOS.h"
 #include "task.h"
-#include "cy_retarget_io.h"
-#include "OnethinxCore01.h"
-#include "LoRaWAN_keys.h"
+#include "queue.h"
+#include "semphr.h"
+#include "ble_task.h"
+#include "gps_task.h"
+#include "gprs_task.h"
+#include "lora_task.h"
 
-coreStatus_t 	coreStatus;
-coreInfo_t 		coreInfo;
+message_struct message_str;
 
-uint8_t RXbuffer[64];
-uint8_t TXbuffer[64];
+cyhal_timer_t timer;
 
 #define LED_BLUE            (P12_4)
 #define LED_RED             (P12_5)
 
-coreConfiguration_t	coreConfig = {
-	.Join.KeysPtr = 		&TTN_OTAAkeys,
-	.Join.DataRate =		DR_AUTO,
-	.Join.Power =			PWR_MAX,
-	.Join.MAXTries = 		100,
-    .Join.SubBand_1st =     EU_SUB_BANDS_DEFAULT,
-	.Join.SubBand_2nd =     EU_SUB_BANDS_DEFAULT,
-	.TX.Confirmed = 		false,
-	.TX.DataRate = 			DR_0,
-	.TX.Power = 			PWR_MAX,
-	.TX.FPort = 			1,
-};
+#define TASK                (256u)
+#define TASK_GPRS           (512u)
+#define TASK_BLE            (configMINIMAL_STACK_SIZE * 4)
+
+
+#define TIMER_CLOCK_HZ          (10000)
+#define TIMER_PERIOD            (9999 * 60)
+
+#define BLE_CMD_Q_LEN           (10u)
+
+static void gpio_interrupt_handler(void *handler_arg, cyhal_gpio_event_t event);
+static void isr_timer(void *callback_arg, cyhal_timer_event_t event);
+void lora_timer_init(void);
+
+/* FOR BLE */
+TaskHandle_t  ble_task_handle;
+QueueHandle_t ble_cmdQ;
+TimerHandle_t timer_handle;
+tx_rx_mode mode_flag = GATT_NOTIF_STOC;
+/***************/
 
 int main(void)
 {
@@ -44,13 +56,21 @@ int main(void)
     /* Enable global interrupts */
     __enable_irq();
 
-    /* Initialize retarget-io to use the debug UART port */
-    result = cy_retarget_io_init(P10_1, P10_0, CY_RETARGET_IO_BAUDRATE);
+
+    /* Initialize the user button */
+    result = cyhal_gpio_init(P0_4, CYHAL_GPIO_DIR_INPUT, CYHAL_GPIO_DRIVE_NONE, CYBSP_BTN_OFF);
+    if (result != CY_RSLT_SUCCESS)
+    {
+        // printf("Failed to init button!\n");
+    }
+
+    /* Configure GPIO interrupt */
+    cyhal_gpio_register_callback(P0_4, gpio_interrupt_handler, NULL);
+    cyhal_gpio_enable_event(P0_4, CYHAL_GPIO_IRQ_RISE, CYHAL_ISR_PRIORITY_DEFAULT, true);
 
     CY_ASSERT(CY_RSLT_SUCCESS == cyhal_gpio_init(LED_BLUE, CYHAL_GPIO_DIR_OUTPUT, CYHAL_GPIO_DRIVE_STRONG, false));
     CY_ASSERT(CY_RSLT_SUCCESS == cyhal_gpio_init(LED_RED, CYHAL_GPIO_DIR_OUTPUT, CYHAL_GPIO_DRIVE_STRONG, false));
 
-    printf("Test printf\n");
 
     /* retarget-io init failed. Stop program execution */
     if (result != CY_RSLT_SUCCESS)
@@ -58,59 +78,93 @@ int main(void)
         CY_ASSERT(0);
     }
 
-    coreStatus = LoRaWAN_Init(&coreConfig);
-    /* Check Onethinx Core info */
-	LoRaWAN_GetInfo(&coreInfo);
-    /* send join using parameters in coreConfig, blocks until either success or MAXtries */
-	coreStatus = LoRaWAN_Join(true);
+    /* FOR BLE */
+    ble_cmdQ = xQueueCreate(BLE_CMD_Q_LEN, sizeof(ble_command_type_t));
 
-    /* check for successful join */
-	if (!coreStatus.mac.isJoined){
-		while(1) {
-			cyhal_gpio_toggle(LED_BLUE);
-			CyDelay(100);
-		}
-	} else {
-        printf("Joined network successfully!\n");
-        cyhal_gpio_write(LED_BLUE, false);
-		/*delay before first message will be sent */
-		CyDelay(1000);
-	}
+    timer_handle = xTimerCreate("Timer", pdMS_TO_TICKS(1000), pdTRUE,
+                               NULL, rtos_timer_cb);
 
-    /* main loop */
-	for(;;)
-	{
-		cyhal_gpio_write(LED_BLUE, true);
 
-		/* compose a message to send */
-        uint8_t j=0;
-        TXbuffer[j++] = 0x48; /* H */
-		TXbuffer[j++] = 0x45; /* E */
-		TXbuffer[j++] = 0x4c; /* L */
-		TXbuffer[j++] = 0x4c; /* L */
-		TXbuffer[j++] = 0x4f; /* O */
-		TXbuffer[j++] = 0x20; /*   */
-		TXbuffer[j++] = 0x57; /* W */
-		TXbuffer[j++] = 0x4f; /* O */
-		TXbuffer[j++] = 0x52; /* R */
-		TXbuffer[j++] = 0x4c; /* L */
-		TXbuffer[j++] = 0x44; /* D */
-        coreStatus = LoRaWAN_Send((uint8_t *) TXbuffer, j, true);
-		CyDelay(1000);
-        if( coreStatus.system.errorStatus == system_BusyError ){
-        	for(int i=0; i<10; i++){
-				cyhal_gpio_toggle(LED_BLUE);;
-				CyDelay(100);
-        	}
-        }
-        else
-        {
-            printf("Sent a message!\n");
-        }
-		cyhal_gpio_write(LED_BLUE, false);
+	message_str.semaphore_lora = xSemaphoreCreateBinary();
+    message_str.semaphore_gprs = xSemaphoreCreateBinary();
+    message_str.mutex = xSemaphoreCreateMutex();
 
-		/* wait before sending next message */
-		CyDelay( 10000 );
-	}
+    lora_timer_init();
 
+    xTaskCreate(task_gps, "GPS Task", TASK_GPRS, &message_str, 1, NULL);
+    xTaskCreate(task_BLE, "BLE Task", TASK_BLE, NULL, 1, &ble_task_handle);
+	xTaskCreate(lora_send, "LoRa", TASK , &message_str, 2, NULL);
+    xTaskCreate(task_gprs, "GPRS Task", TASK_GPRS , &message_str, 2, NULL);
+    
+
+    vTaskStartScheduler();
+
+    CY_ASSERT(0);
+    
+}
+
+/*
+    Interrupt by button. Wake up gprs task
+*/
+static void gpio_interrupt_handler(void *handler_arg, cyhal_gpio_irq_event_t event)
+{
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;;
+    xSemaphoreGiveFromISR(message_str.semaphore_gprs, &xHigherPriorityTaskWoken);
+    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+}
+
+
+void lora_timer_init(void)
+{
+    cy_rslt_t result;
+
+    const cyhal_timer_cfg_t timer_cfg = 
+    {
+        .compare_value = 0,                 /* Timer compare value, not used */
+        .period = TIMER_PERIOD,             /* Defines the timer period */
+        .direction = CYHAL_TIMER_DIR_UP,    /* Timer counts up */
+        .is_compare = false,                /* Don't use compare mode */
+        .is_continuous = true,              /* Run timer indefinitely */
+        .value = 0                          /* Initial value of counter */
+    };
+
+    /* Initialize the timer object. Does not use input pin ('pin' is NC) and
+     * does not use a pre-configured clock source ('clk' is NULL). */
+    result = cyhal_timer_init(&timer, NC, NULL);
+
+    /* timer init failed. Stop program execution */
+    if (result != CY_RSLT_SUCCESS)
+    {
+        CY_ASSERT(0);
+    }
+
+    /* Configure timer period and operation mode such as count direction, 
+       duration */
+    cyhal_timer_configure(&timer, &timer_cfg);
+
+    /* Set the frequency of timer's clock source */
+    cyhal_timer_set_frequency(&timer, TIMER_CLOCK_HZ);
+
+    /* Assign the ISR to execute on timer interrupt */
+    cyhal_timer_register_callback(&timer, isr_timer, NULL);
+
+    /* Set the event on which timer interrupt occurs and enable it */
+    cyhal_timer_enable_event(&timer, CYHAL_TIMER_IRQ_TERMINAL_COUNT,
+                              7, true);
+
+    /* Start the timer with the configured settings */
+    cyhal_timer_start(&timer);
+}
+
+/*
+    Interrupt by timer. Wake up lora task
+*/
+static void isr_timer(void *callback_arg, cyhal_timer_event_t event)
+{
+    (void) callback_arg;
+    (void) event;
+
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;;
+    xSemaphoreGiveFromISR(message_str.semaphore_lora, &xHigherPriorityTaskWoken);
+    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }

@@ -71,7 +71,7 @@
 #define configUSE_QUEUE_SETS                    0
 #define configUSE_TIME_SLICING                  0
 #define configENABLE_BACKWARD_COMPATIBILITY     0
-#define configNUM_THREAD_LOCAL_STORAGE_POINTERS 5
+#define configNUM_THREAD_LOCAL_STORAGE_POINTERS 3
 
 /* Memory allocation related definitions. */
 #define configSUPPORT_STATIC_ALLOCATION         1
@@ -188,7 +188,7 @@ standard names - or at least those used in the unmodified vector table. */
 #define HEAP_ALLOCATION_TYPE5                   (5)     /* heap_5.c*/
 #define NO_HEAP_ALLOCATION                      (0)
 
-#define configHEAP_ALLOCATION_SCHEME            (HEAP_ALLOCATION_TYPE3)
+#define configHEAP_ALLOCATION_SCHEME            (HEAP_ALLOCATION_TYPE4)
 
 /* Check if the ModusToolbox Device Configurator Power personality parameter
  * "System Idle Power Mode" is set to either "CPU Sleep" or "System Deep Sleep".
