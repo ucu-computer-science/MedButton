@@ -15,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent)
     // Example application name - "first-random-app"
     // limit=1 - return only 1 (most recent) LoRa message
     request.setUrl(QUrl("https://eu1.cloud.thethings.network/api/v3/as/applications/first-random-app/packages/storage/uplink_message?limit=1"));
-    // API Key goes after "NNSXS."
+    // API Key goes after "Bearer"
     request.setRawHeader("Authorization" , "Bearer NNSXS.DJBXJQNTIBAYD6LR5NVPUNP64EKDH54OLFKQGSI.OODUM6B6NVTPRDHJIDLUEWMU6IY3JG35Z34OWJ5EMMUVQS5XUQRA");
     request.setRawHeader("Accept" , "text/event-stream");
     request.setRawHeader("Content-Type" , "text/event-stream");
