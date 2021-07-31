@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>geoloc.png</file>
+        <file>Marker.qml</file>
+        <file>mapview.qml</file>
+    </qresource>
+</RCC>
