@@ -52,77 +52,93 @@ void task_gps(void* param) {
     char lon[20], lat[20];
     int len;
     float ignore;
+    
+//     read data and find GPGGA part
+    
+    cyhal_system_delay_ms(5000);
+    for (;;) {
+        if (cyhal_uart_readable(&gps_uart) > 80){
+            cyhal_uart_read(&gps_uart, (void*)rx_buf, &rx_length);
+
+            char *gpgga = strstr(rx_buf, "GPGGA");
+            for (int i = 0; i < strlen(gpgga); i++)  {
+                printf("%c", gpgga[i]);
+            }
+            cyhal_uart_clear(&gps_uart);
+        }
+        cyhal_system_delay_ms(5000);
+    }
 
     //read and parse raw NMEA sentences
 
-    for (;;)
-    {
-        if (cyhal_uart_getc(&gps_uart, &c, 0) == CY_RSLT_SUCCESS)
-        {
-            if (c)
-            {
-                if (c == '$')
-                {
-                    for (k = 0; k < 5; k++)
-                    {
-                        cyhal_uart_getc(&gps_uart, &c, 0);
-                        while (!(c))
-                        {
-                            cyhal_uart_getc(&gps_uart, &c, 0);
-                        }
-                        nmea[k] = c; // G + P + G + G + A
-                    }
+//     for (;;)
+//     {
+//         if (cyhal_uart_getc(&gps_uart, &c, 0) == CY_RSLT_SUCCESS)
+//         {
+//             if (c)
+//             {
+//                 if (c == '$')
+//                 {
+//                     for (k = 0; k < 5; k++)
+//                     {
+//                         cyhal_uart_getc(&gps_uart, &c, 0);
+//                         while (!(c))
+//                         {
+//                             cyhal_uart_getc(&gps_uart, &c, 0);
+//                         }
+//                         nmea[k] = c; // G + P + G + G + A
+//                     }
 
-                    if (strstr(nmea, "GPGGA"))
-                    {
-                        memset(lon, 0, sizeof lon);
-                        memset(lat, 0, sizeof lat);
-                        memset(time, 0, sizeof time);
-                        index = 0;
-                        cyhal_uart_getc(&gps_uart, &c, 0);
-                        cyhal_uart_getc(&gps_uart, &c, 0);
-                        while (!(c == ','))
-                        {
-                            time[index] = c;
-                            ++index;
-                            cyhal_uart_getc(&gps_uart, &c, 0);
-                        }
-                        index = 0;
-                        cyhal_uart_getc(&gps_uart, &c, 0);
-                        while (!(c == ','))
-                        {
-                            lat[index] = c;
-                            ++index;
-                            cyhal_uart_getc(&gps_uart, &c, 0);
-                        }
-                        cyhal_uart_getc(&gps_uart, &c, 0);
+//                     if (strstr(nmea, "GPGGA"))
+//                     {
+//                         memset(lon, 0, sizeof lon);
+//                         memset(lat, 0, sizeof lat);
+//                         memset(time, 0, sizeof time);
+//                         index = 0;
+//                         cyhal_uart_getc(&gps_uart, &c, 0);
+//                         cyhal_uart_getc(&gps_uart, &c, 0);
+//                         while (!(c == ','))
+//                         {
+//                             time[index] = c;
+//                             ++index;
+//                             cyhal_uart_getc(&gps_uart, &c, 0);
+//                         }
+//                         index = 0;
+//                         cyhal_uart_getc(&gps_uart, &c, 0);
+//                         while (!(c == ','))
+//                         {
+//                             lat[index] = c;
+//                             ++index;
+//                             cyhal_uart_getc(&gps_uart, &c, 0);
+//                         }
+//                         cyhal_uart_getc(&gps_uart, &c, 0);
 
-                        index = 0;
-                        cyhal_uart_getc(&gps_uart, &c, 0);
-                        cyhal_uart_getc(&gps_uart, &c, 0);
-                        while (!(c == ','))
-                        {
-                            lon[index] = c;
-                            ++index;
-                            cyhal_uart_getc(&gps_uart, &c, 0);
-                        }
-                        cyhal_uart_getc(&gps_uart, &c, 0);
-                        sscanf(lon, "%f %n", &ignore, &len);
+//                         index = 0;
+//                         cyhal_uart_getc(&gps_uart, &c, 0);
+//                         cyhal_uart_getc(&gps_uart, &c, 0);
+//                         while (!(c == ','))
+//                         {
+//                             lon[index] = c;
+//                             ++index;
+//                             cyhal_uart_getc(&gps_uart, &c, 0);
+//                         }
+//                         cyhal_uart_getc(&gps_uart, &c, 0);
+//                         sscanf(lon, "%f %n", &ignore, &len);
 
-                        /// check if new longitude isn't empty
-                        if (lon[0] != '\0') {
-                            xSemaphoreTake(message_data->mutex, portMAX_DELAY);
-                            message_data->longitude = NMEAtoDecimalDegrees(lon, c);
-                            message_data->latitude = NMEAtoDecimalDegrees(lat, c);
-                            UTCtoKyivTime(time, message_data);
-                            xSemaphoreGive(message_data->mutex);
-                        }
-                        cyhal_system_delay_ms(5000);
-                    }
-                }
-            }
-        }
-    }
+//                         /// check if new longitude isn't empty
+//                         if (lon[0] != '\0') {
+//                             xSemaphoreTake(message_data->mutex, portMAX_DELAY);
+//                             message_data->longitude = NMEAtoDecimalDegrees(lon, c);
+//                             message_data->latitude = NMEAtoDecimalDegrees(lat, c);
+//                             UTCtoKyivTime(time, message_data);
+//                             xSemaphoreGive(message_data->mutex);
+//                         }
+//                         cyhal_system_delay_ms(5000);
+//                     }
+//                 }
+//             }
+//         }
+//     }
 }
 
 
