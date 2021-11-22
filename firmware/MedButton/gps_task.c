@@ -61,8 +61,22 @@ void task_gps(void* param) {
             cyhal_uart_read(&gps_uart, (void*)rx_buf, &rx_length);
 
             char *gpgga = strstr(rx_buf, "GPGGA");
-            for (int i = 0; i < strlen(gpgga); i++)  {
-                printf("%c", gpgga[i]);
+            if (strlen(gpgga) > 10) {
+                char delim[] = ",";
+
+                char *ptr = strtok(gpgga, delim);
+
+                ptr = strtok(NULL, delim);
+                // time
+                UTCtoKyivTime(ptr, message_data)
+                ptr = strtok(NULL, delim);
+                // longtitude
+                message_data->longitude = NMEAtoDecimalDegrees(lon, c);
+                ptr = strtok(NULL, delim);
+                // пропускаєм, бо нам не треба одна буква тут
+                ptr = strtok(NULL, delim);
+                // latitude
+                message_data->latitude = NMEAtoDecimalDegrees(lat, c);
             }
             cyhal_uart_clear(&gps_uart);
         }
