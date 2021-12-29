@@ -38,6 +38,12 @@ void task_gps(void* param) {
     int len;
     float ignore;
     
+    uint64_t uniqueId;
+
+    uniqueId = Cy_SysLib_GetUniqueId();
+
+    snprintf(message_data->unique_id, sizeof(message_data->unique_id), "unique id: %lu%lu", uniqueId);
+    
     
 //     read data from uart
     cyhal_system_delay_ms(5000);
