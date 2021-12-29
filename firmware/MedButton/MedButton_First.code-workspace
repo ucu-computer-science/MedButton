@@ -17,11 +17,8 @@
         //mtb//      macOS  : $HOME/Library/Application Support/Code/User/settings.json
         //mtb//      Linux  : $HOME/.config/Code/User/settings.json
         //mtb//
-        "modustoolbox.toolsPath": "C:/Users/Deer/ModusToolbox/tools_2.3",
+        "modustoolbox.toolsPath": "C:/Users/User/ModusToolbox/tools_2.4",
         "cortex-debug.armToolchainPath": "${config:modustoolbox.toolsPath}/gcc/bin",
-        "cortex-debug.openocdPath": "${config:modustoolbox.toolsPath}/openocd/bin/openocd",
-        "files.associations": {
-            "onethinxcore01.h": "c"
-        }
+        "cortex-debug.openocdPath": "${config:modustoolbox.toolsPath}/openocd/bin/openocd"
     }
 }
