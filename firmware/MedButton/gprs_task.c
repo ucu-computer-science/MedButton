@@ -1,4 +1,5 @@
 #include "gprs_task.h"
+#include "cryptography.h"
 
 #define LED_RED             (P12_5)
 #define GPRS_SETUP          (P9_2)
@@ -40,7 +41,7 @@ void uart_send_cmd_and_wait(char *cmd, size_t cmd_len, cyhal_uart_t *uart_obj)
     {
         while(1)
         {
-            cyhal_gpio_toggle(LED_RED);
+            // cyhal_gpio_toggle(LED_RED);
             cyhal_system_delay_ms(100);
         }
     }
@@ -123,12 +124,16 @@ void task_gprs(void* param) {
                 }
             }
 
+            CY_ALIGN(4) uint8_t encrypted_msg[MAX_MESSAGE_SIZE];
+            CY_ALIGN(4) message;
+            encrypt_message(message, sizeof(message), encrypted_msg);
+
             char sms_config_cmd[] = "AT+CMGF=1\r";
             uart_send_cmd_and_wait(sms_config_cmd, sizeof(sms_config_cmd), &gprs_uart);
             char sms_prepare_cmd[] = "AT+CMGS=\"+380958957865\"\r";
             uart_send_cmd_and_wait(sms_prepare_cmd, sizeof(sms_prepare_cmd), &gprs_uart);
             cyhal_uart_clear(&gprs_uart);
-            uart_send_cmd_and_wait(message, sizeof(message), &gprs_uart);
+            uart_send_cmd_and_wait(encrypted_msg, sizeof(message), &gprs_uart);
             char sms_stop_cmd[] = { (char)26 };
             uart_send_cmd_and_wait(sms_stop_cmd, 1, &gprs_uart);
         }
