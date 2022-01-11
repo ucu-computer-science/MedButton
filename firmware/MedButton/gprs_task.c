@@ -93,7 +93,8 @@ void task_gprs(void* param) {
     while (1) {
 		if (xSemaphoreTake(message_data->semaphore_gprs, 5000)) {
             xSemaphoreTake(message_data->mutex, portMAX_DELAY);
-            sprintf(message, "%s-%f,%f", message_data->resultTime, message_data->latitude, message_data->longitude);
+		//added unique id
+            sprintf(message, "%lu%lu,%s-%f,%f", message_data->uniqueId, message_data->resultTime, message_data->latitude, message_data->longitude);
             xSemaphoreGive(message_data->mutex);
             char at_cmd[] = "AT\r";
 
