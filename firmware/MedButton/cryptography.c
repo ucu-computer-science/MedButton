@@ -11,8 +11,8 @@
 #define AES128_KEY_LENGTH                    (uint32_t)(16u)
 #define MAX_PRNG_VALUE                       (255UL)
 
-CY_ALIGN(4) uint8_t message[MAX_MESSAGE_SIZE];
-CY_ALIGN(4) uint8_t encrypted_msg[MAX_MESSAGE_SIZE];
+// CY_ALIGN(4) uint8_t message[MAX_MESSAGE_SIZE];
+// CY_ALIGN(4) uint8_t encrypted_msg[MAX_MESSAGE_SIZE];
 CY_ALIGN(4) uint8_t decrypted_msg[MAX_MESSAGE_SIZE];
 
 cy_stc_crypto_aes_state_t aes_state;
@@ -30,7 +30,7 @@ void handle_error(void)
 }
 
  
-void encrypt_message(uint8_t* message, uint8_t size){
+void encrypt_message(uint8_t* message, uint8_t size, uint8_t* encrypted_msg){
     /* All data arrays should be 4-byte aligned */
      uint32_t rndNum = 0;
 
