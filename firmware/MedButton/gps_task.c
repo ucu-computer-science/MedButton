@@ -38,9 +38,19 @@ void task_gps(void* param) {
     int len;
     float ignore;
     
+    uint64_t uniqueId;
+
+    uniqueId = Cy_SysLib_GetUniqueId();
+
+    snprintf(message_data->unique_id, sizeof(message_data->unique_id), "unique id: %lu%lu", uniqueId);
+    
     
 //     read data from uart
     cyhal_system_delay_ms(5000);
+
+    char rx_buf[64];
+    size_t rx_length = 64;
+
     for (;;) {
         if (cyhal_uart_readable(&gps_uart) > 80){
             cyhal_uart_read(&gps_uart, (void*)rx_buf, &rx_length);
@@ -54,7 +64,7 @@ void task_gps(void* param) {
 
                 ptr = strtok(NULL, delim);
                 // time
-                UTCtoKyivTime(ptr, message_data)
+                UTCtoKyivTime(ptr, message_data);
                 ptr = strtok(NULL, delim);
                 // longtitude
                 message_data->longitude = NMEAtoDecimalDegrees(lon, c);

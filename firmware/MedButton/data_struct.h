@@ -9,6 +9,7 @@ struct message_struct {
     float longitude;
     char resultTime[11];
     int pulse;
+    char unique_id[20];
     SemaphoreHandle_t mutex;
     SemaphoreHandle_t semaphore_gprs;
     SemaphoreHandle_t semaphore_lora;
