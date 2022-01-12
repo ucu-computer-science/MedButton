@@ -1,18 +1,5 @@
-#include "cy_pdl.h"
-#include "cyhal.h"
-#include "cybsp.h"
-#include "cy_retarget_io.h"
-#define LFSR32_INITSTATE      (0xd8959bc9)
-#define LFSR31_INITSTATE      (0x2bb911f8)
-#define LFSR29_INITSTATE      (0x060c31b7)
+#include "cryptography.h"
 
-#define MAX_MESSAGE_SIZE                     (100u)
-#define AES128_ENCRYPTION_LENGTH             (uint32_t)(16u)
-#define AES128_KEY_LENGTH                    (uint32_t)(16u)
-#define MAX_PRNG_VALUE                       (255UL)
-
-// CY_ALIGN(4) uint8_t message[MAX_MESSAGE_SIZE];
-// CY_ALIGN(4) uint8_t encrypted_msg[MAX_MESSAGE_SIZE];
 CY_ALIGN(4) uint8_t decrypted_msg[MAX_MESSAGE_SIZE];
 
 cy_stc_crypto_aes_state_t aes_state;
@@ -76,7 +63,7 @@ void encrypt_message(uint8_t* message, uint8_t size, uint8_t* encrypted_msg){
      Cy_Crypto_Core_Aes_Free(CRYPTO, &aes_state);
 }
 
-void decrypt_message(uint8_t* message, uint8_t size) {
+void decrypt_message(uint8_t* message, uint8_t size, uint8_t* encrypted_msg) {
     uint8_t aes_block_count = 0;
 
     aes_block_count =  (size % AES128_ENCRYPTION_LENGTH == 0) ?
