@@ -42,7 +42,7 @@ void task_gps(void* param) {
 
     uniqueId = Cy_SysLib_GetUniqueId();
 
-    snprintf(message_data->unique_id, sizeof(message_data->unique_id), "unique id: %lu%lu", uniqueId);
+    snprintf(message_data->unique_id, sizeof(message_data->unique_id), "%lu%lu", uniqueId);
     
     
 //     read data from uart
