@@ -3,12 +3,13 @@
 
 #include "FreeRTOS.h"
 #include "semphr.h"
+#include "queue.h"
 
 struct message_struct {
-    float latitude;
-    float longitude;
-    char resultTime[11];
-    int pulse;
+    float latitude[QUEUE_SIZE];
+    float longitude[QUEUE_SIZE];
+    char resultTime[QUEUE_SIZE][11];
+    int pulse[QUEUE_SIZE];
     char unique_id[20];
     SemaphoreHandle_t mutex;
     SemaphoreHandle_t semaphore_gprs;

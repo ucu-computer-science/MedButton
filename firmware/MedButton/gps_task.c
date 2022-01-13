@@ -1,4 +1,5 @@
 #include "gps_task.h"
+#include "queue.h"
 #include <stdlib.h>
 
 
@@ -15,8 +16,8 @@ const cyhal_uart_cfg_t uart_config =
 void task_gps(void* param) {
     /* uart GPS */
     message_struct *message_data = (message_struct*) param;
-    message_data->longitude = 0.0;
-    message_data->latitude = 0.0;
+//    message_data->longitude = 0.0;
+//    message_data->latitude = 0.0;
 
     cy_rslt_t result;
 
@@ -64,15 +65,17 @@ void task_gps(void* param) {
 
                 ptr = strtok(NULL, delim);
                 // time
-                UTCtoKyivTime(ptr, message_data);
+                char[11] time;
+                UTCtoKyivTime(ptr, time);
+                add_time(message_data->resultTime, time);
                 ptr = strtok(NULL, delim);
                 // longtitude
-                message_data->longitude = NMEAtoDecimalDegrees(lon, c);
+                add_longtitude(message_data->longitude, NMEAtoDecimalDegrees(lon, c));
                 ptr = strtok(NULL, delim);
                 // here would be letter "N" which we do not need
                 ptr = strtok(NULL, delim);
                 // latitude
-                message_data->latitude = NMEAtoDecimalDegrees(lat, c);
+                add_latitute(message_data->latitude, NMEAtoDecimalDegrees(lat, c));
             }
             cyhal_uart_clear(&gps_uart);
         }
@@ -101,7 +104,7 @@ float NMEAtoDecimalDegrees(const char *degree, char quadrant)
     return result;
 }
 
-char *UTCtoKyivTime(const char *utcTime, message_struct *message_data)
+char *UTCtoKyivTime(const char *utcTime, char *time)
 {
     // 172814.0 - hhmmss.ss
     int i, digit, number = 0;
@@ -116,6 +119,6 @@ char *UTCtoKyivTime(const char *utcTime, message_struct *message_data)
         }
     }
     number = (number + 2) % 24;
-    sprintf(message_data->resultTime, "%d:%c%c:%c%c", number, utcTime[2], utcTime[3], utcTime[4], utcTime[5]);
+    sprintf(time, "%d:%c%c:%c%c", number, utcTime[2], utcTime[3], utcTime[4], utcTime[5]);
     return 0;
 }
