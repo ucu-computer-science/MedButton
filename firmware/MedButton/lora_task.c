@@ -50,11 +50,16 @@ void lora_send(void* param) {
         cyhal_system_delay_ms(1000);
     }
 
-    char message[50];
+    char message[150];
     while(1) {
         if(xSemaphoreTake(message_data->semaphore_lora, 5000)) {
             xSemaphoreTake(message_data->mutex, portMAX_DELAY);
-            sprintf(message, "%s-%f,%f,%d.%02d", message_data->resultTime, message_data->latitude, message_data->longitude, (message_data->temp / 100), (message_data->temp % 100));
+            sprintf(message, "%lu,%s-%f,%f\n%s-%f,%f\n%s-%f,%f\n%s-%f,%f\n%s-%f,%f", message_data->uniqueId,
+                    message_data->resultTime[4], message_data->latitude[4], message_data->longitude[4],
+                    message_data->resultTime[3], message_data->latitude[3], message_data->longitude[3],
+                    message_data->resultTime[2], message_data->latitude[2], message_data->longitude[2],
+                    message_data->resultTime[1], message_data->latitude[1], message_data->longitude[1],
+                    message_data->resultTime[0], message_data->latitude[0], message_data->longitude[0]);
             xSemaphoreGive(message_data->mutex);
             coreStatus = LoRaWAN_Send((uint8_t *) message, 64, true);
             cyhal_system_delay_ms(1000); // vTaskDelay 

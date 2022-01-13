@@ -1,34 +1,23 @@
 #include "gps_task.h"
+#include "queue.h"
 #include <stdlib.h>
 
 
 const cyhal_uart_cfg_t uart_config =
-{
-    .data_bits = 8,
-    .stop_bits = 1,
-    .parity = CYHAL_UART_PARITY_NONE,
-    .rx_buffer = NULL,
-    .rx_buffer_size = 0,
-};
+        {
+                .data_bits = 8,
+                .stop_bits = 1,
+                .parity = CYHAL_UART_PARITY_NONE,
+                .rx_buffer = NULL,
+                .rx_buffer_size = 0,
+        };
 
-const char disable_nmea[10][30] = {
-        "$PUBX,40,GLL,0,0,0,0,0,0*5C\r\n",
-        "$PUBX,40,ZDA,0,0,0,0,0,0*44\r\n",
-        "PUBX,40,VTG,0,0,0,0,0,0*5E\r\n",
-        "PUBX,40,GSV,0,0,0,0,0,0*59\r\n",
-        "$PUBX,40,GSA,0,0,0,0,0,0*4E\r\n",
-        "$PUBX,40,RMC,0,0,0,0,0,0*47\r\n",
-        "$PUBX,40,GNS,0,0,0,0,0,0*41\r\n",
-        "$PUBX,40,GRS,0,0,0,0,0,0*5D\r\n",
-        "$PUBX,40,GST,0,0,0,0,0,0*5B\r\n",
-        "$PUBX,40,TXT,0,0,0,0,0,0*43\r\n",
-};
 
 void task_gps(void* param) {
     /* uart GPS */
     message_struct *message_data = (message_struct*) param;
-    message_data->longitude = 0.0;
-    message_data->latitude = 0.0;
+//    message_data->longitude = 0.0;
+//    message_data->latitude = 0.0;
 
     cy_rslt_t result;
 
@@ -41,9 +30,6 @@ void task_gps(void* param) {
         result = cyhal_uart_set_baud(&gps_uart, 9600, NULL);
     }
 
-    // for (size_t i = 0; i < 10; i++) {
-    //     uart_send_cmd_and_wait(disable_nmea[i], 30, &gps_uart);
-    // }
 
     /* GPS TASK */
     uint8_t c = 0;
@@ -53,76 +39,49 @@ void task_gps(void* param) {
     int len;
     float ignore;
 
-    //read and parse raw NMEA sentences
+    uint64_t uniqueId;
 
-    for (;;)
-    {
-        if (cyhal_uart_getc(&gps_uart, &c, 0) == CY_RSLT_SUCCESS)
-        {
-            if (c)
-            {
-                if (c == '$')
-                {
-                    for (k = 0; k < 5; k++)
-                    {
-                        cyhal_uart_getc(&gps_uart, &c, 0);
-                        while (!(c))
-                        {
-                            cyhal_uart_getc(&gps_uart, &c, 0);
-                        }
-                        nmea[k] = c; // G + P + G + G + A
-                    }
+    uniqueId = Cy_SysLib_GetUniqueId();
 
-                    if (strstr(nmea, "GPGGA"))
-                    {
-                        memset(lon, 0, sizeof lon);
-                        memset(lat, 0, sizeof lat);
-                        memset(time, 0, sizeof time);
-                        index = 0;
-                        cyhal_uart_getc(&gps_uart, &c, 0);
-                        cyhal_uart_getc(&gps_uart, &c, 0);
-                        while (!(c == ','))
-                        {
-                            time[index] = c;
-                            ++index;
-                            cyhal_uart_getc(&gps_uart, &c, 0);
-                        }
-                        index = 0;
-                        cyhal_uart_getc(&gps_uart, &c, 0);
-                        while (!(c == ','))
-                        {
-                            lat[index] = c;
-                            ++index;
-                            cyhal_uart_getc(&gps_uart, &c, 0);
-                        }
-                        cyhal_uart_getc(&gps_uart, &c, 0);
+    snprintf(message_data->unique_id, sizeof(message_data->unique_id), "%lu%lu", uniqueId);
 
-                        index = 0;
-                        cyhal_uart_getc(&gps_uart, &c, 0);
-                        cyhal_uart_getc(&gps_uart, &c, 0);
-                        while (!(c == ','))
-                        {
-                            lon[index] = c;
-                            ++index;
-                            cyhal_uart_getc(&gps_uart, &c, 0);
-                        }
-                        cyhal_uart_getc(&gps_uart, &c, 0);
-                        sscanf(lon, "%f %n", &ignore, &len);
 
-                        /// check if new longitude isn't empty
-                        if (lon[0] != '\0') {
-                            xSemaphoreTake(message_data->mutex, portMAX_DELAY);
-                            message_data->longitude = NMEAtoDecimalDegrees(lon, c);
-                            message_data->latitude = NMEAtoDecimalDegrees(lat, c);
-                            UTCtoKyivTime(time, message_data);
-                            xSemaphoreGive(message_data->mutex);
-                        }
-                        cyhal_system_delay_ms(5000);
-                    }
-                }
+//     read data from uart
+    cyhal_system_delay_ms(5000);
+
+    char rx_buf[64];
+    size_t rx_length = 64;
+
+    for (;;) {
+        if (cyhal_uart_readable(&gps_uart) > 80){
+            cyhal_uart_read(&gps_uart, (void*)rx_buf, &rx_length);
+
+//             get only GPGGA part
+            char *gpgga = strstr(rx_buf, "GPGGA");
+            if (strlen(gpgga) > 10) {
+                char delim[] = ",";
+
+                char *ptr = strtok(gpgga, delim);
+
+                ptr = strtok(NULL, delim);
+                // time
+                char[11] time;
+                UTCtoKyivTime(ptr, time);
+                add_time(message_data->resultTime, time);
+                ptr = strtok(NULL, delim);
+                // longtitude
+                add_longtitude(message_data->longitude, NMEAtoDecimalDegrees(lon, c));
+                с = strtok(NULL, delim);
+                // here would be letter "N" which we do not need
+                ptr = strtok(NULL, delim);
+                // latitude
+                add_latitute(message_data->latitude, NMEAtoDecimalDegrees(lat, c));
             }
+            cyhal_uart_clear(&gps_uart);
         }
+        cyhal_system_delay_ms(5000);
     }
+
 }
 
 
@@ -145,7 +104,7 @@ float NMEAtoDecimalDegrees(const char *degree, char quadrant)
     return result;
 }
 
-char *UTCtoKyivTime(const char *utcTime, message_struct *message_data)
+char *UTCtoKyivTime(const char *utcTime, char *time)
 {
     // 172814.0 - hhmmss.ss
     int i, digit, number = 0;
@@ -160,6 +119,6 @@ char *UTCtoKyivTime(const char *utcTime, message_struct *message_data)
         }
     }
     number = (number + 2) % 24;
-    sprintf(message_data->resultTime, "%d:%c%c:%c%c", number, utcTime[2], utcTime[3], utcTime[4], utcTime[5]);
+    sprintf(time, "%d:%c%c:%c%c", number, utcTime[2], utcTime[3], utcTime[4], utcTime[5]);
     return 0;
 }

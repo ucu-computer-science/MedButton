@@ -165,6 +165,6 @@ static void isr_timer(void *callback_arg, cyhal_timer_event_t event)
     (void) event;
 
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;;
-    xSemaphoreGiveFromISR(message_str.semaphore_lora, &xHigherPriorityTaskWoken);
+    xSemaphoreGiveFromISR(message_str.semaphore_gprs, &xHigherPriorityTaskWoken);
     portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
