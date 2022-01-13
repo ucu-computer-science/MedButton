@@ -71,7 +71,7 @@ void task_gps(void* param) {
                 ptr = strtok(NULL, delim);
                 // longtitude
                 add_longtitude(message_data->longitude, NMEAtoDecimalDegrees(lon, c));
-                ptr = strtok(NULL, delim);
+                с = strtok(NULL, delim);
                 // here would be letter "N" which we do not need
                 ptr = strtok(NULL, delim);
                 // latitude

@@ -90,7 +90,7 @@ void task_gprs(void* param) {
         return -1;
     }
 
-    char message[50];
+    char message[150];
     while (1) {
 		if (xSemaphoreTake(message_data->semaphore_gprs, 5000)) {
             xSemaphoreTake(message_data->mutex, portMAX_DELAY);

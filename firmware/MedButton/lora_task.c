@@ -50,7 +50,7 @@ void lora_send(void* param) {
         cyhal_system_delay_ms(1000);
     }
 
-    char message[50];
+    char message[150];
     while(1) {
         if(xSemaphoreTake(message_data->semaphore_lora, 5000)) {
             xSemaphoreTake(message_data->mutex, portMAX_DELAY);
