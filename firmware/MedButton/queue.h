@@ -6,6 +6,7 @@
 
 #define QUEUE_SIZE    5
 #define MESSAGE_SIZE 40
+#define TIME_STR_SIZE 40
 
 
 void add_time(char info_queue[QUEUE_SIZE][MESSAGE_SIZE], const char *element);

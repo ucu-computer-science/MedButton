@@ -8,7 +8,7 @@
 struct message_struct {
     float latitude[QUEUE_SIZE];
     float longitude[QUEUE_SIZE];
-    char resultTime[QUEUE_SIZE][11];
+    char resultTime[QUEUE_SIZE][TIME_STR_SIZE];
     int pulse[QUEUE_SIZE];
     char unique_id[20];
     SemaphoreHandle_t mutex;

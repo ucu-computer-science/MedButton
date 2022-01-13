@@ -35,7 +35,7 @@ int main(){
     return 0;
 }
 
-void add_time(char info_queue[QUEUE_SIZE][MESSAGE_SIZE], const char *element){
+void add_time(char info_queue[QUEUE_SIZE][TIME_STR_SIZE], const char *element){
     strcpy(info_queue[time_idx], element);
     time_idx++;
     if (time_idx == QUEUE_SIZE) {
