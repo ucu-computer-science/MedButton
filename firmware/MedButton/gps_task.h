@@ -7,7 +7,7 @@
 #include "data_struct.h"
 
 void task_gps(void* param);
-char *UTCtoKyivTime(const char *utcTime, message_struct *message_data);
+char *UTCtoKyivTime(const char *utcTime, char *time);
 float NMEAtoDecimalDegrees(const char *degree, char quadrant);
 
 #endif //C_GPS_TASK_H
