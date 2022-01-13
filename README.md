@@ -36,18 +36,19 @@ The processed data is transferred to a operator PC using [LoRaWAN Onethinx Core 
 
 # Working progress:
 - Connected GPS and receive data in raw NMEA(National Marine Electronics Association) format
-- Extracting GPGLL sentences: Geographic Position, Latitude / Longitude and time 
+- Extracting GPGGA sentences: latitude / longitude and time 
 - Parsing data in appropriate format
-- Connected button to our MCU
+- Implemented AES encryption/decryption of transmitted via GPRS message
 - Transferring parsed data after pressing the button using the GPRS module
 - Working on connecting LoRa Onethink module and transferring data with LoRa
 
 # Future plans:
-- Connect temperature and blood pressure sensors to transfer additional data
-- Create an algorithm for unique identification of a soldier
-- Think about fuse
+- Connect temperature sensor to transfer additional data about a soldier's condition
+- Think of adding a security cap to the buttonn's box
+- Think of collaboration with existing initiatives for combat support in Ukraine
 
 # Contacts:
-- [Nataliia Romanyshyn](https://github.com/romanyshyn-natalia)
 - [Diana Hromyak](https://github.com/Diana-Doe)
-- [Anna Korabliova](https://github.com/anika02)
+- [Alina Muliak](https://github.com/alinamuliak)
+- [Oleksandra Stasiuk](https://github.com/oleksadobush)
+- [Vira Saliieva](https://github.com/vsaliievaa)
