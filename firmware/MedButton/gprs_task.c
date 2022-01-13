@@ -95,7 +95,7 @@ void task_gprs(void* param) {
 		if (xSemaphoreTake(message_data->semaphore_gprs, 5000)) {
             xSemaphoreTake(message_data->mutex, portMAX_DELAY);
 		    //added unique id
-            sprintf(message, "%lu,%s-%f,%f\n%s-%f,%f\n%s-%f,%f\n%s-%f,%f\n%s-%f,%f", message_data->uniqueId,
+            sprintf(message, "%lu,%s-%f,%f\n%s-%f,%f\n%s-%f,%f\n%s-%f,%f\n%s-%f,%f", message_data->unique_id,
                             message_data->resultTime[4], message_data->latitude[4], message_data->longitude[4],
                             message_data->resultTime[3], message_data->latitude[3], message_data->longitude[3],
                             message_data->resultTime[2], message_data->latitude[2], message_data->longitude[2],
