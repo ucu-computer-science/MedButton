@@ -90,12 +90,12 @@ void task_gprs(void* param) {
         handle_error();
     }
 
-    char message[165] = {' '};
+    CY_ALIGN(4) char message[165] = {' '};
     while (1) {
 		if (xSemaphoreTake(message_data->semaphore_gprs, 5000)) {
             xSemaphoreTake(message_data->mutex, portMAX_DELAY);
 		    //added unique id
-            sprintf(message, "%s, %d:%d:%d:\n%s-%f,%f\n%s-%f,%f\r\n%s-%f,%f\n%s-%f,%f\n%s-%f,%f",
+            sprintf(message, "%s,%d:%d:%d:\n%s-%f,%f\n%s-%f,%f\n%s-%f,%f\n%s-%f,%f\n%s-%f,%f",
                             message_data->unique_id, message_data->current_time.tm_hour, message_data->current_time.tm_min, message_data->current_time.tm_sec,
                             message_data->resultTime[4], message_data->latitude[4], message_data->longitude[4],
                             message_data->resultTime[3], message_data->latitude[3], message_data->longitude[3],
@@ -120,29 +120,32 @@ void task_gprs(void* param) {
                 cyhal_gpio_write(GPRS_SETUP, true);
                 cyhal_system_delay_ms(2000);
                 cyhal_gpio_write(GPRS_SETUP, false);
-                cyhal_system_delay_ms(3000);
+                cyhal_system_delay_ms(15000);
 
                 cyhal_uart_clear(&gprs_uart);
                 uart_send_cmd_and_wait(at_cmd, sizeof(at_cmd), &gprs_uart);
                 uart_send_cmd_and_wait(at_cmd, sizeof(at_cmd), &gprs_uart);
 
                 if (trials >= MAX_NUM_OF_TRIALS) {
-                    handle_error();
+                    xSemaphoreGive(message_data->semaphore_lora);
                 }
             }
 
-            CY_ALIGN(4) uint8_t encrypted_msg[MAX_MESSAGE_SIZE];
-            CY_ALIGN(4) message;
-            encrypt_message(message, sizeof(message), encrypted_msg);
+            // CY_ALIGN(4) uint8_t encrypted_msg[MAX_MESSAGE_SIZE];
+            // CY_ALIGN(4) message;
+            //encrypt_message(message, sizeof(message), encrypted_msg);
 
             char sms_config_cmd[] = "AT+CMGF=1\r";
             uart_send_cmd_and_wait(sms_config_cmd, sizeof(sms_config_cmd), &gprs_uart);
-            char sms_prepare_cmd[] = "AT+CMGS=\"+380969735753\"\r";
+            CyDelay(5000);
+            char sms_prepare_cmd[] = "AT+CMGS=\"+380662349833\"\r";
             uart_send_cmd_and_wait(sms_prepare_cmd, sizeof(sms_prepare_cmd), &gprs_uart);
             cyhal_uart_clear(&gprs_uart);
-            uart_send_cmd_and_wait(encrypted_msg, sizeof(message), &gprs_uart);
+            CyDelay(5000);
+            uart_send_cmd_and_wait(message, sizeof(message), &gprs_uart);
             char sms_stop_cmd[] = { (char)26 };
             uart_send_cmd_and_wait(sms_stop_cmd, 1, &gprs_uart);
+            CyDelay(5000);
         }
     }
 }
