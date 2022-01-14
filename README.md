@@ -1,4 +1,4 @@
-# Project name: MedButton
+# Project name: MedButton_2.0
 
 ### Semester project of Principles of Computer Organization course
 
@@ -10,15 +10,16 @@ The task of combat medics is to provide first aid to the wounded soldiers as soo
 - secure data transferring
 - small power consumption of the device
 - fuse (does not allow a soldier to use the device accidentally)
-- secure wounded soldier identification  (to minimize the call of medics by enemies) 
+- secure wounded soldier identification (to minimize the call of medics by enemies) 
 - convenient device allocation
 
 # Project Architecture:
-![button_scheme](https://user-images.githubusercontent.com/57792587/104817794-31aa9400-582c-11eb-9132-d88ef78cf1a9.jpg)
+![button_scheme](https://user-images.githubusercontent.com/70766505/149558098-0538d740-d670-4503-ae2c-2dadcc385b62.png)
 
 
 # Modules:
-Currently, MedButton is based on [PSOC 6 BLE PIONEER KIT](https://www.cypress.com/documentation/development-kitsboards/psoc-6-ble-pioneer-kit-cy8ckit-062-ble) microcontroller:
+Currently, MedButton is based on [LoRaWAN Onethinx Core Module](https://www.onethinx.com/module.html) 
+microcontroller:
 ![image](https://user-images.githubusercontent.com/57792587/104818743-2bb7b180-5832-11eb-9194-ea758e3505d8.png)
 
 
@@ -40,7 +41,7 @@ The processed data is transferred to a operator PC using [LoRaWAN Onethinx Core 
 - Parsing data in appropriate format
 - Implemented AES encryption/decryption of transmitted via GPRS message
 - Transferring parsed data after pressing the button using the GPRS module
-- Working on connecting LoRa Onethink module and transferring data with LoRa
+- Connected LoRa Onethink module to transfer data with it
 
 # Future plans:
 - Connect temperature sensor to transfer additional data about a soldier's condition
