@@ -14,7 +14,8 @@ The task of combat medics is to provide first aid to the wounded soldiers as soo
 - convenient device allocation
 
 # Project Architecture:
-![button_scheme](https://user-images.githubusercontent.com/70766505/149558098-0538d740-d670-4503-ae2c-2dadcc385b62.png)
+![button_scheme](https://user-images.githubusercontent.com/70766505/149572823-72414ef4-dbc2-4cb1-bdbb-2bf57210bcec.png)
+
 
 
 # Modules:
@@ -33,7 +34,7 @@ The processed data is transferred to a operator PC using [LoRaWAN Onethinx Core 
 ![image](https://user-images.githubusercontent.com/57792587/104819149-425f0800-5834-11eb-9384-cc11adebe060.png)
 
 As a button we use Joystick for Arduino:
-![arduino-joystick-arduino-5879-700x700](https://user-images.githubusercontent.com/70766505/149559588-d53efa7e-c2ad-497b-8512-b0b715c08ab8.jpg)
+![arduino-joystick-arduino-5879-300x300](https://user-images.githubusercontent.com/70766505/149559588-d53efa7e-c2ad-497b-8512-b0b715c08ab8.jpg)
 
 # Working progress:
 - Connected GPS and receive data in raw NMEA(National Marine Electronics Association) format
