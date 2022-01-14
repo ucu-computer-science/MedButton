@@ -35,6 +35,7 @@ The processed data is transferred to a operator PC using [LoRaWAN Onethinx Core 
 ![image](https://user-images.githubusercontent.com/57792587/104819149-425f0800-5834-11eb-9384-cc11adebe060.png)
 
 As a button we use Joystick for Arduino:
+
 ![81772579-7fcc0280-94fb-11ea-941a-461bd82a1822](https://user-images.githubusercontent.com/70766505/149573321-62e244ec-0380-4ab2-a78d-8bfc87e9ada4.jpg)
 
 
