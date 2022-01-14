@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include "FreeRTOS.h"
 #include "task.h"
-#include "queue.h"
+#include "info_queue.h"
 #include "semphr.h"
 #include "ble_task.h"
 #include "gps_task.h"
