@@ -12,6 +12,7 @@ struct message_struct {
     uint8_t pulse;
     char unique_id[20];
     int16_t temp;
+    struct tm current_time;
     SemaphoreHandle_t mutex;
     SemaphoreHandle_t semaphore_gprs;
     SemaphoreHandle_t semaphore_lora;

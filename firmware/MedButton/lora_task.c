@@ -50,11 +50,12 @@ void lora_send(void* param) {
         cyhal_system_delay_ms(1000);
     }
 
-    char message[150];
+    char message[165];
     while(1) {
         if(xSemaphoreTake(message_data->semaphore_lora, 5000)) {
             xSemaphoreTake(message_data->mutex, portMAX_DELAY);
-            sprintf(message, "%s:%s-%f,%f\n%s-%f,%f\n%s-%f,%f\n%s-%f,%f\n%s-%f,%f", message_data->unique_id,
+            sprintf(message, "%s, %d:%d:%d:\n%s-%f,%f\n%s-%f,%f\n%s-%f,%f\n%s-%f,%f\n%s-%f,%f",
+                    message_data->unique_id, message_data->current_time.tm_hour, message_data->current_time.tm_min, message_data->current_time.tm_sec,
                     message_data->resultTime[4], message_data->latitude[4], message_data->longitude[4],
                     message_data->resultTime[3], message_data->latitude[3], message_data->longitude[3],
                     message_data->resultTime[2], message_data->latitude[2], message_data->longitude[2],

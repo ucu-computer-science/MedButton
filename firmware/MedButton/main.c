@@ -85,6 +85,11 @@ int main(void)
                                NULL, rtos_timer_cb);
 
 
+    /* Set current time */
+    message_str.current_time.tm_hour = 12;
+    message_str.current_time.tm_min = 44;
+    message_str.current_time.tm_sec = 30;
+
 	message_str.semaphore_lora = xSemaphoreCreateBinary();
     message_str.semaphore_gprs = xSemaphoreCreateBinary();
     message_str.mutex = xSemaphoreCreateMutex();
