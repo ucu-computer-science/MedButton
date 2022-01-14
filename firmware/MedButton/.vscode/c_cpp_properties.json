@@ -17,6 +17,7 @@
         ],
         "mtbDefaultIncludePath": [
             ".",
+            "./GeneratedSource",
             "./OnethinxCore",
             "../mtb_shared/TARGET_CY8CKIT-062-BLE/latest-v2.X",
             "../mtb_shared/TARGET_CY8CKIT-062-BLE/latest-v2.X/COMPONENT_BSP_DESIGN_MODUS",

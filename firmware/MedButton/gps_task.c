@@ -4,13 +4,13 @@
 
 
 const cyhal_uart_cfg_t uart_config =
-        {
-                .data_bits = 8,
-                .stop_bits = 1,
-                .parity = CYHAL_UART_PARITY_NONE,
-                .rx_buffer = NULL,
-                .rx_buffer_size = 0,
-        };
+{
+    .data_bits = 8,
+    .stop_bits = 1,
+    .parity = CYHAL_UART_PARITY_NONE,
+    .rx_buffer = NULL,
+    .rx_buffer_size = 0,
+};
 
 
 void task_gps(void* param) {
@@ -32,20 +32,21 @@ void task_gps(void* param) {
 
 
     /* GPS TASK */
-    uint8_t c = 0;
-    int k, index;
-    char nmea[20], time[20];
+    char c = 0;
+    // int k, index;
+    char nmea[20];
+    // char nmea[20], time[20];
     char lon[20], lat[20];
-    int len;
-    float ignore;
-
+    // int len;
+    // float ignore;
+    
     uint64_t uniqueId;
 
     uniqueId = Cy_SysLib_GetUniqueId();
 
     snprintf(message_data->unique_id, sizeof(message_data->unique_id), "%lu%lu", uniqueId);
-
-
+    
+    
 //     read data from uart
     cyhal_system_delay_ms(5000);
 
@@ -65,13 +66,13 @@ void task_gps(void* param) {
 
                 ptr = strtok(NULL, delim);
                 // time
-                char[11] time;
+                char time[11];
                 UTCtoKyivTime(ptr, time);
                 add_time(message_data->resultTime, time);
                 ptr = strtok(NULL, delim);
                 // longtitude
                 add_longtitude(message_data->longitude, NMEAtoDecimalDegrees(lon, c));
-                с = strtok(NULL, delim);
+                c = strtok(NULL, delim);
                 // here would be letter "N" which we do not need
                 ptr = strtok(NULL, delim);
                 // latitude

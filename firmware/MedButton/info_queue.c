@@ -1,12 +1,11 @@
-#include "main.h"
-
+#include "info_queue.h"
 
 int latitude_idx = 0;
 int longitude_idx = 0;
 int time_idx = 0;
 int pulse_idx = 0;
 
-//int main(){
+// int main(){
 //    char info_queue[QUEUE_SIZE][MESSAGE_SIZE];
 //    char one[] = "gpgga";
 //
@@ -32,8 +31,8 @@ int pulse_idx = 0;
 //    add_pulse(latitude, 7);
 //    add_pulse(latitude, 8);
 //    print_queue(latitude);
-//    return 0;
-//}
+//     return 0;
+// }
 
 void add_time(char info_queue[QUEUE_SIZE][TIME_STR_SIZE], const char *element){
     strcpy(info_queue[time_idx], element);
@@ -59,7 +58,7 @@ void add_longtitude(float info_queue[QUEUE_SIZE], float element){
     }
 }
 
-void add_pulse(int info_queue[QUEUE_SIZE], int element){
+void add_pulse(uint8_t info_queue[QUEUE_SIZE], int element){
     info_queue[pulse_idx] = element;
     pulse_idx++;
     if (pulse_idx == QUEUE_SIZE) {

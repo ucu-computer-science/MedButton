@@ -6,16 +6,16 @@
 #define MAX_NUM_OF_TRIALS    2
 
 cyhal_uart_t gprs_uart;
-uint8_t rx_buf[64];
+uint8_t rx_buf[64];       
 
 const cyhal_uart_cfg_t uart_config_gprs =
-        {
-                .data_bits = 8,
-                .stop_bits = 1,
-                .parity = CYHAL_UART_PARITY_NONE,
-                .rx_buffer = rx_buf,
-                .rx_buffer_size = 64,
-        };
+{
+    .data_bits = 8,
+    .stop_bits = 1,
+    .parity = CYHAL_UART_PARITY_NONE,
+    .rx_buffer = rx_buf,
+    .rx_buffer_size = 64,
+};
 
 
 void wait_uart_free(cyhal_uart_t *uart_obj)
@@ -87,24 +87,26 @@ void task_gprs(void* param) {
     cy_rslt_t rslt;
     rslt = cyhal_gpio_init(GPRS_SETUP, CYHAL_GPIO_DIR_OUTPUT, CYHAL_GPIO_DRIVE_STRONG, false);
     if (rslt != CY_RSLT_SUCCESS) {
-        return -1;
+        handle_error();
     }
 
-    char message[150];
+    char message[150] = {' '};
     while (1) {
-        if (xSemaphoreTake(message_data->semaphore_gprs, 5000)) {
+		if (xSemaphoreTake(message_data->semaphore_gprs, 5000)) {
             xSemaphoreTake(message_data->mutex, portMAX_DELAY);
-            //added unique id
-            sprintf(message, "%lu,%s-%f,%f\n%s-%f,%f\n%s-%f,%f\n%s-%f,%f\n%s-%f,%f", message_data->unique_id,
-                    message_data->resultTime[4], message_data->latitude[4], message_data->longitude[4],
-                    message_data->resultTime[3], message_data->latitude[3], message_data->longitude[3],
-                    message_data->resultTime[2], message_data->latitude[2], message_data->longitude[2],
-                    message_data->resultTime[1], message_data->latitude[1], message_data->longitude[1],
-                    message_data->resultTime[0], message_data->latitude[0], message_data->longitude[0]);
+		    //added unique id
+            sprintf(message, "%s:%s-%f,%f\n%s-%f,%f\r\n%s-%f,%f\n%s-%f,%f\n%s-%f,%f", message_data->unique_id,
+                            message_data->resultTime[4], message_data->latitude[4], message_data->longitude[4],
+                            message_data->resultTime[3], message_data->latitude[3], message_data->longitude[3],
+                            message_data->resultTime[2], message_data->latitude[2], message_data->longitude[2],
+                            message_data->resultTime[1], message_data->latitude[1], message_data->longitude[1],
+                            message_data->resultTime[0], message_data->latitude[0], message_data->longitude[0]);
+            // sprintf(message, "%s:%s-%f,%f", message_data->unique_id,
+            //                 message_data->resultTime, message_data->latitude, message_data->longitude);
             xSemaphoreGive(message_data->mutex);
             char at_cmd[] = "AT\r";
 
-            cyhal_uart_clear(&gprs_uart);
+            cyhal_uart_clear(&gprs_uart);      
             uart_send_cmd_and_wait(at_cmd, sizeof(at_cmd), &gprs_uart);
             uart_send_cmd_and_wait(at_cmd, sizeof(at_cmd), &gprs_uart);
 
@@ -124,8 +126,7 @@ void task_gprs(void* param) {
                 uart_send_cmd_and_wait(at_cmd, sizeof(at_cmd), &gprs_uart);
 
                 if (trials >= MAX_NUM_OF_TRIALS) {
-                    return -1;
-                    //break;
+                    handle_error();
                 }
             }
 
@@ -135,7 +136,7 @@ void task_gprs(void* param) {
 
             char sms_config_cmd[] = "AT+CMGF=1\r";
             uart_send_cmd_and_wait(sms_config_cmd, sizeof(sms_config_cmd), &gprs_uart);
-            char sms_prepare_cmd[] = "AT+CMGS=\"+380662349833\"\r";
+            char sms_prepare_cmd[] = "AT+CMGS=\"+380969735753\"\r";
             uart_send_cmd_and_wait(sms_prepare_cmd, sizeof(sms_prepare_cmd), &gprs_uart);
             cyhal_uart_clear(&gprs_uart);
             uart_send_cmd_and_wait(encrypted_msg, sizeof(message), &gprs_uart);
