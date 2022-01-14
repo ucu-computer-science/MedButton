@@ -41,34 +41,38 @@ void lora_send(void* param) {
     // /* check for successful join */
     if (!coreStatus.mac.isJoined){
         // while(1) {
-		cyhal_gpio_toggle(LED_BLUE);
-        cyhal_system_delay_ms(100);
+		// cyhal_gpio_toggle(LED_BLUE);
+        // cyhal_system_delay_ms(100);
         // }
+        xSemaphoreGive(message_data->semaphore_gprs);
     } else {
         cyhal_gpio_write(LED_BLUE, true);
         /*delay before first message will be sent */
         cyhal_system_delay_ms(1000);
     }
 
-    char message[165];
+    char message[150];
     while(1) {
         if(xSemaphoreTake(message_data->semaphore_lora, 5000)) {
             xSemaphoreTake(message_data->mutex, portMAX_DELAY);
-            sprintf(message, "%s, %d:%d:%d:\n%s-%f,%f\n%s-%f,%f\n%s-%f,%f\n%s-%f,%f\n%s-%f,%f",
-                    message_data->unique_id, message_data->current_time.tm_hour, message_data->current_time.tm_min, message_data->current_time.tm_sec,
-                    message_data->resultTime[4], message_data->latitude[4], message_data->longitude[4],
-                    message_data->resultTime[3], message_data->latitude[3], message_data->longitude[3],
-                    message_data->resultTime[2], message_data->latitude[2], message_data->longitude[2],
-                    message_data->resultTime[1], message_data->latitude[1], message_data->longitude[1],
-                    message_data->resultTime[0], message_data->latitude[0], message_data->longitude[0]);
+            // sprintf(message, "%s:%s-%f,%f\n%s-%f,%f\n%s-%f,%f\n%s-%f,%f\n%s-%f,%f", message_data->unique_id,
+            //         message_data->resultTime[4], message_data->latitude[4], message_data->longitude[4],
+            //         message_data->resultTime[3], message_data->latitude[3], message_data->longitude[3],
+            //         message_data->resultTime[2], message_data->latitude[2], message_data->longitude[2],
+            //         message_data->resultTime[1], message_data->latitude[1], message_data->longitude[1],
+            //         message_data->resultTime[0], message_data->latitude[0], message_data->longitude[0]);
+            sprintf(message, "%s,%d:%d:%d\n%s-%f,%f\n%s-%f,%f", message_data->unique_id,
+            message_data->current_time.tm_hour, message_data->current_time.tm_min, message_data->current_time.tm_sec,
+            message_data->resultTime[0], message_data->latitude[0], message_data->longitude[0]);
             xSemaphoreGive(message_data->mutex);
             coreStatus = LoRaWAN_Send((uint8_t *) message, 64, true);
             cyhal_system_delay_ms(1000); // vTaskDelay 
             if( coreStatus.system.errorStatus == system_BusyError ){
-                for(int i=0; i<10; i++){
-                    cyhal_gpio_toggle(LED_BLUE);;
-                    cyhal_system_delay_ms(100);
-                }
+                // for(int i=0; i<10; i++){
+                //     cyhal_gpio_toggle(LED_BLUE);;
+                //     cyhal_system_delay_ms(100);
+                // }
+                xSemaphoreGive(message_data->semaphore_gprs);
             }
         }
     }
