@@ -14,7 +14,8 @@ The task of combat medics is to provide first aid to the wounded soldiers as soo
 - convenient device allocation
 
 # Project Architecture:
-![button_scheme](https://user-images.githubusercontent.com/70766505/149573195-7760b8ee-4c9c-4a4e-a804-e9bbbdf7da88.png)
+![button_scheme](https://user-images.githubusercontent.com/70766505/149573640-c482787c-71df-4347-9f59-c3a62ad88cb3.png)
+
 
 
 
