@@ -1,0 +1,115 @@
+{
+    "version": 4,
+    "env": {
+        "mtbCompilerArgs": [
+            "-c",
+            "-mcpu=cortex-m4",
+            "--specs=nano.specs",
+            "-Og",
+            "-mfloat-abi=softfp",
+            "-mfpu=fpv4-sp-d16",
+            "-mthumb",
+            "-ffunction-sections",
+            "-fdata-sections",
+            "-ffat-lto-objects",
+            "-g",
+            "-Wall"
+        ],
+        "mtbDefaultIncludePath": [
+            ".",
+            "./GeneratedSource",
+            "./OnethinxCore",
+            "../mtb_shared/TARGET_CY8CKIT-062-BLE/latest-v2.X",
+            "../mtb_shared/TARGET_CY8CKIT-062-BLE/latest-v2.X/COMPONENT_BSP_DESIGN_MODUS",
+            "../mtb_shared/TARGET_CY8CKIT-062-BLE/latest-v2.X/COMPONENT_BSP_DESIGN_MODUS/GeneratedSource",
+            "../mtb_shared/abstraction-rtos/release-v1.5.0",
+            "../mtb_shared/abstraction-rtos/release-v1.5.0/include",
+            "../mtb_shared/abstraction-rtos/release-v1.5.0/include/COMPONENT_FREERTOS",
+            "../mtb_shared/abstraction-rtos/release-v1.5.0/include/Template",
+            "../mtb_shared/bless/release-v3.50.0",
+            "../mtb_shared/bless/release-v3.50.0/common",
+            "../mtb_shared/capsense/release-v2.10.0",
+            "../mtb_shared/clib-support/release-v1.2.0",
+            "../mtb_shared/clib-support/release-v1.2.0/TOOLCHAIN_GCC_ARM",
+            "../mtb_shared/core-lib/release-v1.3.0",
+            "../mtb_shared/core-lib/release-v1.3.0/include",
+            "../mtb_shared/freertos/release-v10.3.1",
+            "../mtb_shared/freertos/release-v10.3.1/Source",
+            "../mtb_shared/freertos/release-v10.3.1/Source/include",
+            "../mtb_shared/freertos/release-v10.3.1/Source/portable",
+            "../mtb_shared/freertos/release-v10.3.1/Source/portable/COMPONENT_CM4",
+            "../mtb_shared/freertos/release-v10.3.1/Source/portable/COMPONENT_CM4/TOOLCHAIN_GCC_ARM",
+            "../mtb_shared/mtb-hal-cat1/release-v1.6.0",
+            "../mtb_shared/mtb-hal-cat1/release-v1.6.0/COMPONENT_PSOC6HAL",
+            "../mtb_shared/mtb-hal-cat1/release-v1.6.0/COMPONENT_PSOC6HAL/COMPONENT_CAT1A",
+            "../mtb_shared/mtb-hal-cat1/release-v1.6.0/COMPONENT_PSOC6HAL/COMPONENT_CAT1A/include",
+            "../mtb_shared/mtb-hal-cat1/release-v1.6.0/COMPONENT_PSOC6HAL/COMPONENT_CAT1A/include/pin_packages",
+            "../mtb_shared/mtb-hal-cat1/release-v1.6.0/COMPONENT_PSOC6HAL/COMPONENT_CAT1A/include/triggers",
+            "../mtb_shared/mtb-hal-cat1/release-v1.6.0/COMPONENT_PSOC6HAL/include",
+            "../mtb_shared/mtb-hal-cat1/release-v1.6.0/COMPONENT_PSOC6HAL/source",
+            "../mtb_shared/mtb-hal-cat1/release-v1.6.0/include",
+            "../mtb_shared/mtb-pdl-cat1/release-v2.3.1",
+            "../mtb_shared/mtb-pdl-cat1/release-v2.3.1/cmsis",
+            "../mtb_shared/mtb-pdl-cat1/release-v2.3.1/cmsis/include",
+            "../mtb_shared/mtb-pdl-cat1/release-v2.3.1/devices",
+            "../mtb_shared/mtb-pdl-cat1/release-v2.3.1/devices/COMPONENT_CAT1A",
+            "../mtb_shared/mtb-pdl-cat1/release-v2.3.1/devices/COMPONENT_CAT1A/include",
+            "../mtb_shared/mtb-pdl-cat1/release-v2.3.1/devices/COMPONENT_CAT1A/include/ip",
+            "../mtb_shared/mtb-pdl-cat1/release-v2.3.1/drivers",
+            "../mtb_shared/mtb-pdl-cat1/release-v2.3.1/drivers/include",
+            "../mtb_shared/retarget-io/release-v1.2.0",
+            "${config:modustoolbox.toolsPath}/gcc/lib/gcc/arm-none-eabi/10.3.1/include",
+            "${config:modustoolbox.toolsPath}/gcc/lib/gcc/arm-none-eabi/10.3.1/include-fixed",
+            "${config:modustoolbox.toolsPath}/gcc/arm-none-eabi/include",
+            "${config:modustoolbox.toolsPath}/gcc/arm-none-eabi/include/c++/10.3.1",
+            "${config:modustoolbox.toolsPath}/gcc/arm-none-eabi/include/c++/10.3.1/arm-none-eabi/thumb/v7e-m/fpv4-sp/softfp",
+            "${config:modustoolbox.toolsPath}/gcc/arm-none-eabi/include/c++/10.3.1/backward"
+        ],
+        "mtbDefaultDefines": [
+            "CY_USING_HAL",
+            "CY_APPNAME_MedButton_First",
+            "CY8C6347BZI_BLD53",
+            "CY_TARGET_DEVICE=CY8C6347BZI_BLD53",
+            "TARGET_CY8CKIT_062_BLE",
+            "CY_TARGET_BOARD=CY8CKIT_062_BLE",
+            "COMPONENT_BLESS_CONTROLLER",
+            "COMPONENT_BLESS_HOST",
+            "COMPONENT_BSP_DESIGN_MODUS",
+            "COMPONENT_CAT1",
+            "COMPONENT_CAT1A",
+            "COMPONENT_CM0P_SLEEP",
+            "COMPONENT_CM4",
+            "COMPONENT_CY8CKIT_062_BLE",
+            "COMPONENT_FREERTOS",
+            "COMPONENT_PSOC6HAL",
+            "COMPONENT_RTOS_AWARE",
+            "COMPONENT_SOFTFP",
+            "DEBUG",
+            "CY_SUPPORTS_DEVICE_VALIDATION",
+            "__GNUC__"
+        ]
+    },
+    "configurations": [
+        {
+            "name": "MTB",
+            "compilerPath": "${config:modustoolbox.toolsPath}/gcc/bin/arm-none-eabi-gcc",
+            "compilerArgs": [
+                "${mtbCompilerArgs}"
+            ],
+            "compileCommands": "./build/compile_commands.json",
+            "intelliSenseMode": "gcc-x86",
+            "cStandard": "c99",
+            "cppStandard": "c++11",
+            "includePath": [
+                "${mtbDefaultIncludePath}"
+            ],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "databaseFilename": ""
+            },
+            "defines": [
+                "${mtbDefaultDefines}"
+            ]
+        }
+    ]
+}
