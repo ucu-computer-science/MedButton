@@ -51,22 +51,6 @@ void uart_send_cmd_and_wait(char *cmd, size_t cmd_len, cyhal_uart_t *uart_obj)
     cyhal_system_delay_ms(3000);
 }
 
-// static void gprs_setup(void) {
-//     cy_rslt_t rslt;
-//     rslt = cyhal_gpio_init(GPRS_SETUP, CYHAL_GPIO_DIR_OUTPUT, CYHAL_GPIO_DRIVE_STRONG, false);
-
-//     if (rslt != CY_RSLT_SUCCESS) {
-//         //printf("Not powered\r\n");
-//     }
-
-//     cyhal_gpio_write(GPRS_SETUP, false);
-//     cyhal_system_delay_ms(1000);
-//     cyhal_gpio_write(GPRS_SETUP, true);
-//     cyhal_system_delay_ms(2000);
-//     cyhal_gpio_write(GPRS_SETUP, false);
-//     cyhal_system_delay_ms(3000);
-// }
-
 void task_gprs(void* param) {
     /* uart GPRS */
     message_struct *message_data = (message_struct*) param;
@@ -102,14 +86,6 @@ void task_gprs(void* param) {
                             message_data->resultTime[2], message_data->latitude[2], message_data->longitude[2],
                             message_data->resultTime[1], message_data->latitude[1], message_data->longitude[1],
                             message_data->resultTime[0], message_data->latitude[0], message_data->longitude[0]);
-            // sprintf(message, "%s:%s-%f,%f", message_data->unique_id,
-            //                 message_data->resultTime, message_data->latitude, message_data->longitude);
-            // sprintf(message, "%s,%d:%d:%d\n%s-%f,%f\n", message_data->unique_id,
-            // message_data->current_time.tm_hour, message_data->current_time.tm_min, message_data->current_time.tm_sec,
-            // message_data->resultTime[0], message_data->latitude[0], message_data->longitude[0]);
-            // sprintf(message, "%s,%d:%d:%d\n%s-%f,%f\r\n", message_data->unique_id,
-            // message_data->current_time.tm_hour, message_data->current_time.tm_min, message_data->current_time.tm_sec,
-            // "02:16", 49.8176937, 24.0219439);
             xSemaphoreGive(message_data->mutex);
             char at_cmd[] = "AT\r";
 
