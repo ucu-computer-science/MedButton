@@ -81,9 +81,5 @@ kitprog3 power_config on 3300
 ${TARGET}.cm4 configure -rtos auto -rtos-wipe-on-reset-halt 1
 psoc6 sflash_restrictions 1
 ```
-- Connect UART pins - `P10.0` of the module to `P6` of programmer and `P10.1` of module to `P8` of programmer as on image:
 
-![Connection guidance](pics/module_mp4_connection.png)
-
-- Open a terminal program, set baud rate to 115200, and connect to the port to which the programmer is connected.
-- Run `main.c` to debug your project.
+- Run `main.c`.
