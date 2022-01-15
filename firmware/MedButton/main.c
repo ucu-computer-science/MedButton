@@ -30,8 +30,6 @@ cyhal_timer_t timer;
 #define BLE_CMD_Q_LEN           (10u)
 
 static void gpio_interrupt_handler(void *handler_arg, cyhal_gpio_event_t event);
-//static void isr_timer(void *callback_arg, cyhal_timer_event_t event);
-//void lora_timer_init(void);
 
 /* FOR BLE */
 TaskHandle_t  ble_task_handle;
@@ -94,8 +92,6 @@ int main(void)
     message_str.semaphore_gprs = xSemaphoreCreateBinary();
     message_str.mutex = xSemaphoreCreateMutex();
 
-//    lora_timer_init();
-
     xTaskCreate(task_gps, "GPS Task", TASK_GPRS, &message_str, 1, NULL);
     // xTaskCreate(task_BLE, "BLE Task", TASK_BLE, &message_str, 1, &ble_task_handle);
 	xTaskCreate(lora_send, "LoRa", TASK , &message_str, 2, NULL);
@@ -117,59 +113,3 @@ static void gpio_interrupt_handler(void *handler_arg, cyhal_gpio_irq_event_t eve
     xSemaphoreGiveFromISR(message_str.semaphore_gprs, &xHigherPriorityTaskWoken);
     portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
-
-
-// void lora_timer_init(void)
-// {
-//     cy_rslt_t result;
-
-//     const cyhal_timer_cfg_t timer_cfg = 
-//     {
-//         .compare_value = 0,                 /* Timer compare value, not used */
-//         .period = TIMER_PERIOD,             /* Defines the timer period */
-//         .direction = CYHAL_TIMER_DIR_UP,    /* Timer counts up */
-//         .is_compare = false,                /* Don't use compare mode */
-//         .is_continuous = true,              /* Run timer indefinitely */
-//         .value = 0                          /* Initial value of counter */
-//     };
-
-//     /* Initialize the timer object. Does not use input pin ('pin' is NC) and
-//      * does not use a pre-configured clock source ('clk' is NULL). */
-//     result = cyhal_timer_init(&timer, NC, NULL);
-
-//     /* timer init failed. Stop program execution */
-//     if (result != CY_RSLT_SUCCESS)
-//     {
-//         CY_ASSERT(0);
-//     }
-
-//     /* Configure timer period and operation mode such as count direction, 
-//        duration */
-//     cyhal_timer_configure(&timer, &timer_cfg);
-
-//     /* Set the frequency of timer's clock source */
-//     cyhal_timer_set_frequency(&timer, TIMER_CLOCK_HZ);
-
-//     /* Assign the ISR to execute on timer interrupt */
-//     cyhal_timer_register_callback(&timer, isr_timer, NULL);
-
-//     /* Set the event on which timer interrupt occurs and enable it */
-//     cyhal_timer_enable_event(&timer, CYHAL_TIMER_IRQ_TERMINAL_COUNT,
-//                               7, true);
-
-//     /* Start the timer with the configured settings */
-//     cyhal_timer_start(&timer);
-// }
-
-/*
-    Interrupt by timer. Wake up gprs task
-*/
-// static void isr_timer(void *callback_arg, cyhal_timer_event_t event)
-// {
-//     (void) callback_arg;
-//     (void) event;
-
-//     BaseType_t xHigherPriorityTaskWoken = pdFALSE;;
-//     xSemaphoreGiveFromISR(message_str.semaphore_gprs, &xHigherPriorityTaskWoken);
-//     portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-// }
