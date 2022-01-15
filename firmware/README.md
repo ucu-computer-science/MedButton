@@ -1,20 +1,16 @@
-# First MedButton LoRa project in MTB2.3 environment
+# MedButton 2.0 Project (ModusToolbox 2.4 environment)
 
-This project contain base project for MedButton development. In this project we are finaly able to have all needed for us parts such as:
-- FreeRTOS
-- GPS code
-- GSM code
-- LoRa code
-- other
+This repository contains all parts of firmware for the MedButton 2.0 project. The main ones are LoRa, GPS, and GPRS tasks, configuration files, and an implementation of a queue for storing messages.
 
 Warning: Module can't be debugged for first launch after connection. Problem is that host trying to aquire device before powering it up. So you need just restart debug after failure.
 
 ## What is needed to start
-- With help of `C:\Users\YOUR_USER\ModusToolbox\tools_2.3\library-manager\library-manager.exe` open `firmware` Directory and `MedButton` project and update libraries with `Update` button:
-![Library manager](pics/library_manager.png)
-- Inside `\firmware\MedButton\` call `make vscode` with ModusShell (or cygwin) 
-- Open project in VSCode by calling `code MedButton_First.code-workspace` inside `/firmware/MedButton` with ModusShell (or cygwin)
-- In `.vscode/launch.json` Replace `"Launch PSoC6 CM4 (KitProg3_MiniProg4)"` configuration with next:
+- Open modus_shell on your device and go to the project's folder.
+- In project's folder, go to `\firmware\MedButton` folder.
+- Run `make getlibs` command to ensure all libraries the project uses are up to date.
+- Run `make vscode` command to build the project for VS Code.
+- Run `code .` command to open the whole project in VS Code.
+- In file `.vscode\launch.json', replace `"Launch PSoC6 CM4 (KitProg3_MiniProg4)"` field with the following one:
 ```
 {
     "name": "Launch PSoC6 CM4 (KitProg3_MiniProg4)",
@@ -77,7 +73,7 @@ Warning: Module can't be debugged for first launch after connection. Problem is 
                                 // This is helpful when something is not working right
 },
 ```
-- Add `kitprog3 power_config on 3300` line into `./openocd.tcl` file to make it look like:
+- Change the `.\openocd.tcl` file contents to the following ones:
 ```
 source [find interface/kitprog3.cfg]
 source [find target/psoc6.cfg]
@@ -89,5 +85,5 @@ psoc6 sflash_restrictions 1
 
 ![Connection guidance](pics/module_mp4_connection.png)
 
-- On your PC, open terminal for `115200` baudrate and standard settings
-- You are done! Feel free to build and debug your project.
+- Open a terminal program, set baud rate to 115200, and connect to the port to which the programmer is connected.
+- Run `main.c` to debug your project.
