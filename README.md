@@ -17,7 +17,12 @@ The task of combat medics is to provide first aid to the wounded soldiers as soo
 ![button_scheme](https://user-images.githubusercontent.com/70766505/149573640-c482787c-71df-4347-9f59-c3a62ad88cb3.png)
 
 
+# First Prototype
+![photo_2022-01-15 11 28 14](https://user-images.githubusercontent.com/70766505/149617270-de258abd-31c2-479a-ba21-adbb4920f9cd.jpeg)
+![photo_2022-01-15 11 28 22](https://user-images.githubusercontent.com/70766505/149617271-cfdb6521-735a-4758-8e96-0d2fa5efc60e.jpeg)
 
+# What's inside
+![photo_2022-01-15 11 42 11](https://user-images.githubusercontent.com/70766505/149617504-5f2a9ef6-6e56-40f7-acc4-ee41a6902e45.jpeg)
 
 
 # Modules:
