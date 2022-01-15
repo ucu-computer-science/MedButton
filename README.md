@@ -27,7 +27,7 @@ The task of combat medics is to provide first aid to the wounded soldiers as soo
 # Modules:
 Currently, MedButton is based on [LoRaWAN Onethinx Core Module](https://www.onethinx.com/module.html) 
 microcontroller:
-![image](https://user-images.githubusercontent.com/57792587/104819286-2b6ce580-5835-11eb-83d5-5dda4e13de9a.png)
+![demokit](https://user-images.githubusercontent.com/70766505/149617739-9bc14a93-2d03-4c54-b18c-26b3fb32dc07.jpg)
 
 
 Data is located with Ublox NEO-6M GPS module:
@@ -37,6 +37,7 @@ Data is located with Ublox NEO-6M GPS module:
 
 The processed data is transferred to a operator PC using [LoRaWAN Onethinx Core Module](https://www.onethinx.com/module.html), but in case of some interruptions in a communication line we are using also [GSM/GPRS SIM900A](https://www.itead.cc/sim900-sim900a-gsm-gprs-minimum-system-module.html):
 
+![image](https://user-images.githubusercontent.com/57792587/104819286-2b6ce580-5835-11eb-83d5-5dda4e13de9a.png)
 ![image](https://user-images.githubusercontent.com/57792587/104819149-425f0800-5834-11eb-9384-cc11adebe060.png)
 
 As a button we use Joystick for Arduino:
