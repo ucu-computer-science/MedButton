@@ -36,7 +36,7 @@ Data is located with Ublox NEO-6M GPS module:
 ![image](https://user-images.githubusercontent.com/57792587/104818846-aed90780-5832-11eb-8680-ed09a42f007a.png)
 
 
-The processed data is transferred to a operator PC using [LoRaWAN Onethinx Core Module](https://www.onethinx.com/module.html), but in case of some interruptions in a communication line we are using also [GSM/GPRS SIM900A](https://www.itead.cc/sim900-sim900a-gsm-gprs-minimum-system-module.html):
+The processed data is transferred to a operator PC using [GSM/GPRS SIM900A](https://www.itead.cc/sim900-sim900a-gsm-gprs-minimum-system-module.html), but in case of some interruptions in a communication line we are using also [LoRaWAN Onethinx Core Module](https://www.onethinx.com/module.html):
 
 ![image](https://user-images.githubusercontent.com/57792587/104819149-425f0800-5834-11eb-9384-cc11adebe060.png)
 
