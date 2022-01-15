@@ -3,7 +3,7 @@
 ### Semester project of Principles of Computer Organization course
 
 # Project aim:
-The task of combat medics is to provide first aid to the wounded soldiers as soon as possible. The device for calling combat medics with geolocation makes it possible to find the wounded in a minimum of time. 
+In the battlefield, two main causes of death are bleeding and pneumothorax. Both these causes could be prevented if there was a way to provide in-time help to those who need it the most. Medical Button 2.0 is the second version of MedButton project - a device which allows combat medics to provide help for soldiers on the battlefield.
 
 # General requirements:
 
