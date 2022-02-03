@@ -27,65 +27,65 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch PSoC6 CM4 (KitProg3_MiniProg4)",
-            "type": "cortex-debug",
-            "request": "launch",
-            "cwd": "${workspaceRoot}",
-            "executable": "./build/CY8CKIT-062-BLE/Debug/MedButton_First.elf",
-            "servertype": "openocd",
-            "searchDir": [
-                "${workspaceRoot}",
-                "${config:modustoolbox.toolsPath}/openocd/scripts/"
-            ],
-            "openOCDPreConfigLaunchCommands": [
-                "set PROGRAMMER kitprog3",
-                "set ENABLE_ACQUIRE 0",
-                "set ENABLE_CM0 0",
-            ],
-            "configFiles": [
-                "openocd.tcl"
-            ],
-            "overrideLaunchCommands": [
-                "set mem inaccessible-by-default off",
-                "-enable-pretty-printing",
-                "set remotetimeout 15",
-                "monitor reset init",
-                // Comment this next line out if you don't want to reload program
-                "monitor program {./build/CY8CKIT-062-BLE/Debug/MedButton_First.hex}",
-                "monitor reset run",
-                "monitor sleep 200",
-                "monitor psoc6 reset_halt sysresetreq"
-            ],
-            "numberOfProcessors": 1,
-            "targetProcessor": 1,  // Set to 0 for the CM0+, set to 1 for the CM4
-            "postStartSessionCommands": [       // Needed if runToMain is false
-                // Following two commands are needed to get gdb and openocd and HW all in sync.
-                // Or, execution context (PC, stack, registers, etc.) look like they are from before reset.
-                // The stepi, is a pretend instruction that does not actually do a stepi, but MUST be done
-                // Its a documented workaround in openocd. Do a 'monitor help' to see more info
-                //
-                // An alternative command to use is "continue" instead of the following two
-                "monitor gdb_sync",
-                "stepi"
-            ],
-            "overrideRestartCommands": [
-                "monitor reset init",
-                "monitor reset run",
-                "monitor sleep 200",
-                "monitor psoc6 reset_halt sysresetreq"
-            ],
-            "postRestartSessionCommands": [
-                "monitor gdb_sync",
-                "stepi"
-            ],
-            // svdFile is optional, it can be very large.
-            "svdFile": "",
-            "runToMain": true,          // if true, program will halt at main. Not used for a restart
-            "preLaunchTask": "Build: Build [Debug]",    // Set this to run a task from tasks.json
-                                                        // before starting a debug session
-            "showDevDebugOutput": false // When set to true, displays output of GDB.
-                                        // This is helpful when something is not working right
-        },
+			"name": "Launch PSoC6 CM4 (KitProg3_MiniProg4)",
+			"type": "cortex-debug",
+			"request": "launch",
+			"cwd": "${workspaceRoot}",
+			"executable": "./build/CY8CKIT-062-BLE/Debug/MedButton_First.elf",
+			"servertype": "openocd",
+			"searchDir": [
+				"${workspaceRoot}",
+				"${config:modustoolbox.toolsPath}/openocd/scripts/"
+			],
+			"openOCDPreConfigLaunchCommands": [
+				"set PROGRAMMER kitprog3",
+				"set ENABLE_ACQUIRE 0",
+				"set ENABLE_CM0 0"
+			],
+			"configFiles": [
+				"openocd.tcl"
+			],
+			"overrideLaunchCommands": [
+				"set mem inaccessible-by-default off",
+				"-enable-pretty-printing",
+				"set remotetimeout 15",
+				// Comment this next line out if you don't want to reload program
+				"monitor program {./build/CY8CKIT-062-BLE/Debug/MedButton_First.hex}",
+				"monitor reset run",
+				"monitor sleep 200",
+				"monitor psoc6 reset_halt sysresetreq"
+			],
+			"numberOfProcessors": 1,
+			"targetProcessor": 1,  // Set to 0 for the CM0+, set to 1 for the CM4
+			"postStartSessionCommands": [
+				// Needed if runToMain is false
+				// Following two commands are needed to get gdb and openocd and HW all in sync.
+				// Or, execution context (PC, stack, registers, etc.) look like they are from before reset.
+				// The stepi, is a pretend instruction that does not actually do a stepi, but MUST be done
+				// Its a documented workaround in openocd. Do a 'monitor help' to see more info
+				//
+				// An alternative command to use is "continue" instead of the following two
+				"monitor gdb_sync",
+				"stepi"
+			],
+			"overrideRestartCommands": [
+				"monitor reset init",
+				"monitor reset run",
+				"monitor sleep 200",
+				"monitor psoc6 reset_halt sysresetreq"
+			],
+			"postRestartSessionCommands": [
+				"monitor gdb_sync",
+				"stepi"
+			],
+			// svdFile is optional, it can be very large.
+			"svdFile": "",
+			"runToMain": true,          // if true, program will halt at main. Not used for a restart
+			"preLaunchTask": "Build: Build [Debug]",    // Set this to run a task from tasks.json
+														// before starting a debug session
+			"showDevDebugOutput": false // When set to true, displays output of GDB.
+										// This is helpful when something is not working right
+		},
         // When using 'attach', make sure your program is running on the board and that your
         // executable matches the image in the chip exactly, or else strange things can happen
         // with breakpoints, variables, etc.
@@ -109,22 +109,18 @@
             "overrideAttachCommands": [
                 "set mem inaccessible-by-default off",
                 "-enable-pretty-printing",
-                "monitor halt"
+                "set remotetimeout 15"
             ],
             "numberOfProcessors": 2,
             "targetProcessor": 1,  // Set to 0 for the CM0+, set to 1 for the CM4
             "overrideRestartCommands": [
-                "monitor reset init",
-                "monitor reset run",
-                "monitor sleep 200",
-                "monitor psoc6 reset_halt sysresetreq"
+                "starti"
             ],
             "postRestartSessionCommands": [
-                "monitor gdb_sync",
-                "stepi"
             ],
             // svdFile is optional, it can be very large.
-            "svdFile": "",
+            "svdFile": "../mtb_shared/mtb-pdl-cat1/release-v2.3.1/devices/COMPONENT_CAT1A/svd/psoc6_01.svd",
+            "breakAfterReset": true,
             "showDevDebugOutput": false // When set to true, displays output of GDB.
                                         // This is helpful when something is not working right
         },
@@ -146,6 +142,7 @@
                 "openocd.tcl"
             ],
             "overrideLaunchCommands": [
+                "set remotetimeout 15",
                 "monitor reset init",
                 "monitor psoc6 sflash_restrictions 1",
                 "monitor erase_all",
@@ -170,6 +167,7 @@
                 "openocd.tcl"
             ],
             "overrideLaunchCommands": [
+                "set remotetimeout 15",
                 "monitor psoc6 sflash_restrictions 1",
                 "monitor program {./build/CY8CKIT-062-BLE/Debug/MedButton_First.hex}",
                 "monitor reset_config srst_only",
@@ -197,7 +195,7 @@
             ],
             "demangle": true,
             // svdFile is optional, it can be very large.
-            "svdFile": "",
+            "svdFile": "../mtb_shared/mtb-pdl-cat1/release-v2.3.1/devices/COMPONENT_CAT1A/svd/psoc6_01.svd",
             "runToMain": true,          // if true, program will halt at main. Not used for a restart
             "preLaunchTask": "Build: Build [Debug]", // Set this to run a task from tasks.json before
                                                      // starting a debug session
@@ -217,7 +215,7 @@
             "device": "CY8C6xx7_CM4_sect256KB",
             "demangle": true,
             // svdFile is optional, it can be very large.
-            "svdFile": "",
+            "svdFile": "../mtb_shared/mtb-pdl-cat1/release-v2.3.1/devices/COMPONENT_CAT1A/svd/psoc6_01.svd",
             "showDevDebugOutput": false // When set to true, displays output of GDB.
                                         // This is helpful when something is not working right
         },
@@ -231,9 +229,9 @@
             "servertype": "jlink",
             "device": "CY8C6xx7_CM0p_sect256KB_tm",
             "overrideLaunchCommands": [
-                "monitor reset 2",      // Reset via the reset pin
-                "monitor flash erase",
                 "monitor reset 0",      // Reset both core and the peripherals
+                "monitor flash erase",
+                "monitor reset 2",      // Reset via the reset pin
                 "quit"
             ],
             "showDevDebugOutput": false // When set to true, displays output of GDB.
@@ -249,9 +247,9 @@
             "servertype": "jlink",
             "device": "CY8C6xx7_CM0p_sect256KB_tm",
             "overrideLaunchCommands": [
-                "monitor reset 2",      // Reset via the reset pin
-                "-target-download",
                 "monitor reset 0",      // Reset both core and the peripherals
+                "-target-download",
+                "monitor reset 2",      // Reset via the reset pin
                 "monitor go",
                 "quit"
             ],
