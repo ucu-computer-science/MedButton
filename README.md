@@ -3,15 +3,15 @@
 ### Semester project of Principles of Computer Organization course
 
 # Project aim:
-In the battlefield, two main causes of death are bleeding and pneumothorax. Both these causes could be prevented if there was a way to provide in-time help to those who need it the most. Medical Button 2.0 is the second version of MedButton project - a device which allows combat medics to provide help for soldiers on the battlefield.
+In the battlefield, nearly one fifth of combatants die because of abscence of medical help. Two main causes of death are bleeding (is lethal for half of the wounded soldiers) and pneumothorax. Both these causes could be eliminated or at least minimized if there was a way to provide in-time help to soldiers in the field. Medical Button 2.0 is the second version of MedButton project - a device which allows combat medics to see where they are needed on the battlefield and help the wounded in a more secure and faster way.
 
-# General requirements:
-
-- secure data transferring
-- small power consumption of the device
-- fuse (does not allow a soldier to use the device accidentally)
+# General requirements
+Key requirements to the device are as follows:
+- secure data transfer
+- minor power consumption of the device
+- a fuse (does not allow a soldier to activate the device accidentally)
 - secure wounded soldier identification (to minimize the call of medics by enemies) 
-- convenient device allocation
+- convenient device location
 
 # Project Architecture:
 ![button_scheme](https://user-images.githubusercontent.com/70766505/149573640-c482787c-71df-4347-9f59-c3a62ad88cb3.png)
@@ -30,38 +30,62 @@ microcontroller:
 ![demokit](https://user-images.githubusercontent.com/70766505/149617739-9bc14a93-2d03-4c54-b18c-26b3fb32dc07.jpg)
 
 
-Data is located with Ublox NEO-6M GPS module:
+Data is gathered with the help of Ublox NEO-6M GPS module:
 
 ![image](https://user-images.githubusercontent.com/57792587/104818846-aed90780-5832-11eb-8680-ed09a42f007a.png)
 
 
-The processed data is transferred to a operator PC using [LoRaWAN Onethinx Core Module](https://www.onethinx.com/module.html), but in case of some interruptions in a communication line we are using also [GSM/GPRS SIM900A](https://www.itead.cc/sim900-sim900a-gsm-gprs-minimum-system-module.html):
+A message, composed of the processed data and timestamps, is transferred to an operator PC using [LoRaWAN Onethinx Core Module](https://www.onethinx.com/module.html). In case of any interruptions in a communication line, we are using also [GSM/GPRS SIM900A](https://www.itead.cc/sim900-sim900a-gsm-gprs-minimum-system-module.html):
 
 ![image](https://user-images.githubusercontent.com/57792587/104819286-2b6ce580-5835-11eb-83d5-5dda4e13de9a.png)
 ![image](https://user-images.githubusercontent.com/57792587/104819149-425f0800-5834-11eb-9384-cc11adebe060.png)
 
-As a button we use Joystick for Arduino:
+If, after switching to GSM module, the transfer is still unsuccessful, the device tries to send the message via LoRa again. The switching continues until the message is sent to the medic's PC.
+
+As a button, we use Joystick for Arduino:
 
 ![81772579-7fcc0280-94fb-11ea-941a-461bd82a1822](https://user-images.githubusercontent.com/70766505/149573321-62e244ec-0380-4ab2-a78d-8bfc87e9ada4.jpg)
 
 
 
 # Working progress:
-- Connected GPS and receive data in raw NMEA(National Marine Electronics Association) format
+- Connected GPS and receive data in raw NMEA (National Marine Electronics Association) format
 - Extracting GPGGA sentences: latitude / longitude and time 
 - Parsing data in appropriate format
-- Implemented AES encryption/decryption of transmitted via GPRS message
+- Implemented AES encryption/decryption of the message transmitted via GPRS
 - Transferring parsed data after pressing the button using the GPRS module
 - Connected LoRa Onethink module to transfer data with it
 
-# Future plans:
-- Connect temperature sensor to transfer additional data about a soldier's condition
-- Think of adding a security cap to the buttonn's box
-- Think of collaboration with existing initiatives for combat support in Ukraine
-- For GPRS we need 5V and we use it from PSoC6 WIFI BT Prototyping Kit, and that's its only usage, so we need to replace it.
+# Future plans
+Future developments can be done is several main spheres:
+#### Security & reliability
+- Implement CBC AES algorithm to make the encryption even more secure
+- Add a security cap to the button's box to prevent accidental activation
+- Fix all movable modules and wires inside the box to prevent disassembly while the soldier is moving
 
-# Contacts:
+#### Power supply
+To power GPRS with 5V, we use a separate PSoC 6 MCU. Apparently, it needs to be replaced with another source of power (e.g. a battery).
+
+#### Interface
+- Write a convenient application to decrypt all incoming messages on the medics' PC (those coming from LoRa and from GPRS)
+
+#### New funcitonality & features
+- Connect temperature and/or pulse sensor(s) to transfer additional data about a soldier's condition
+
+#### Future development
+- Perform first tests on the poligons
+- Think of collaboration with existing initiatives for combat support in Ukraine
+
+# Repository structure
+The project's main code for programming and debugging can be found in the `firmware/MedButton` folder.
+
+# Contributors:
+- Bohdan Yaremkiv
+- Maksym Maystrenko
+- Oleg Farenyuk
+- [Anna Korabliova](https://github.com/anika02)
 - [Diana Hromyak](https://github.com/Diana-Doe)
+- [Natalia Romanyshyn](https://github.com/romanyshyn-natalia)
 - [Alina Muliak](https://github.com/alinamuliak)
 - [Oleksandra Stasiuk](https://github.com/oleksadobush)
 - [Vira Saliieva](https://github.com/vsaliievaa)
