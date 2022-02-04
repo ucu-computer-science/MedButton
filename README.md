@@ -60,7 +60,6 @@ As a button, we use Joystick for Arduino:
 # Future plans
 Future developments can be done is several main spheres:
 #### Security & reliability
-- Implement CBC AES algorithm to make the encryption even more secure;
 - Add a security cap to the button's box to prevent accidental activation + replace joystick with comfortable and safe button;
 - Fix all movable modules and wires inside the box to prevent disassembly while the soldier is moving.
 
