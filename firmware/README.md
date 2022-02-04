@@ -10,7 +10,7 @@ Warning: Module can't be debugged for first launch after connection. Problem is 
 - Run `make getlibs` command to ensure all libraries the project uses are up to date.
 - Run `make vscode` command to build the project for VS Code.
 - Run `code .` command to open the whole project in VS Code.
-- In file `.vscode\launch.json', replace `"Launch PSoC6 CM4 (KitProg3_MiniProg4)"` field with the following one:
+- In file `.vscode\launch.json'`, replace `"Launch PSoC6 CM4 (KitProg3_MiniProg4)"` field with the following one:
 ```
 {
     "name": "Launch PSoC6 CM4 (KitProg3_MiniProg4)",
